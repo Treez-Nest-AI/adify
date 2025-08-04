@@ -10,7 +10,11 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "server": "node server/dist/index.js",
-    "server:dev": "npx ts-node server/index.ts"
+    "server:dev": "npx ts-node server/index.ts",
+    "python:dev": "cd python_backend && python app.py",
+    "python:screenshot": "cd python_backend && python screenshot_api.py",
+    "python:install": "pip install -r requirements.txt",
+    "python:setup": "cd python_backend && playwright install chromium"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

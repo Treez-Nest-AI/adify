@@ -1408,7 +1408,13 @@ const fetchScreenshot = async (url: string) => {
     }
 
     const data = await response.json();
-    return data?.data?.screenshot_url || null;
+    
+    // Construct full URL for the screenshot
+    if (data?.data?.screenshot_url) {
+      return `http://localhost:5000${data.data.screenshot_url}`;
+    }
+    
+    return null;
   } catch (error) {
     console.error('Screenshot API Error:', error);
     return null;
