@@ -84,7 +84,7 @@ const PaymentDetails: React.FC = () => {
             >
               <ArrowLeft className="w-4 h-4" />
             </Button>
-            <h1 className="text-xl font-semibold">SANDWICHLAB AI</h1>
+            <h1 className="text-xl brand-font">TEadifyz.AI</h1>
           </div>
         </div>
       </div>
@@ -252,7 +252,7 @@ const PaymentDetails: React.FC = () => {
               </Button>
 
               <p className="text-xs text-gray-600 text-center">
-                By subscribing, you authorize SANDWICHLAB AI to charge you according to the terms until you cancel.
+                By subscribing, you authorize <span className="brand-font-alt">TEadifyz.AI</span> to charge you according to the terms until you cancel.
               </p>
             </form>
 

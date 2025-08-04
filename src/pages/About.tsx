@@ -467,7 +467,7 @@ export default function About() {
               <p className="text-gray-300 leading-relaxed">
                 Our journey began when our founders recognized a critical gap in the market. While large enterprises had access 
                 to sophisticated advertising tools and AI capabilities, small and medium businesses were left behind, struggling 
-                with manual processes and limited resources. This observation sparked the creation of SANDWICHLAB AI - a platform 
+                with manual processes and limited resources. This observation sparked the creation of <span className="brand-font-alt">TEadifyz.AI</span> - a platform 
                 that would level the playing field and empower businesses to compete effectively in the digital marketplace.
               </p>
               

@@ -365,7 +365,7 @@ const Features = () => {
               </span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Discover how SANDWICHLAB AI revolutionizes your advertising with cutting-edge AI technology, 
+              Discover how <span className="brand-font-alt">TEadifyz.AI</span> revolutionizes your advertising with cutting-edge AI technology, 
               multi-platform support, and advanced analytics.
             </p>
           </div>
@@ -411,7 +411,7 @@ const Features = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16 animate-slide-up">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
-              Why Choose <span className="text-shimmer">SANDWICHLAB AI</span>?
+              Why Choose <span className="brand-font">TEadifyz.AI</span>?
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Experience the future of advertising with our comprehensive suite of features designed for success.
@@ -462,7 +462,7 @@ const Features = () => {
       Ready to Transform Your Advertising?
     </h2>
     <p className="text-xl text-white/90 mb-8 animate-slide-up stagger-1">
-      Join thousands of businesses already using SANDWICHLAB AI to scale their advertising efforts.
+      Join thousands of businesses already using <span className="brand-font-alt">TEadifyz.AI</span> to scale their advertising efforts.
     </p>
     <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up stagger-2">
       <Button className="btn-glow bg-white text-gray-900 font-semibold px-8 py-4 rounded-lg hover:bg-gray-100 transition-all duration-300 hover:shadow-lg hover:shadow-white/25 hover:scale-105">

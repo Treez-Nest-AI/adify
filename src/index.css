@@ -146,6 +146,8 @@
 
 /* i added */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap');
 
 :root {
   --background: hsl(0, 0%, 0%);
@@ -318,6 +320,43 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: shimmer 4s ease-in-out infinite;
+  }
+  
+  /* TEadifyz Brand Font */
+  .brand-font {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: hsl(207, 90%, 54%);
+    position: relative;
+  }
+  
+  .brand-font::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 112, 243, 0.1);
+    filter: blur(8px);
+    z-index: -1;
+  }
+  
+  /* Alternative brand font for smaller text */
+  .brand-font-alt {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    background: linear-gradient(
+      135deg,
+      hsl(207, 90%, 54%),
+      hsl(259, 70%, 59%)
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
   
   /* Button Effects */
@@ -608,6 +647,15 @@
   }
   100% { 
     transform: rotate(360deg); 
+  }
+}
+
+@keyframes brandGlow {
+  0%, 100% { 
+    background-position: 0% 50%; 
+  }
+  50% { 
+    background-position: 100% 50%; 
   }
 }
 

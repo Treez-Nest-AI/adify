@@ -51,7 +51,7 @@
 //             >
 //               <ArrowLeft className="w-4 h-4" />
 //             </Button>
-//             <h1 className="text-xl font-semibold">SANDWICHLAB AI</h1>
+//             <h1 className="text-xl font-semibold">TEadifyz.AI</h1>
 //           </div>
 //         </div>
 //       </div>
@@ -62,7 +62,7 @@
 //           <div className="space-y-6">
 //             <div>
 //               <h2 className="text-3xl font-bold mb-2">Welcome Back</h2>
-//               <p className="text-gray-600">Sign in to your SANDWICHLAB AI account</p>
+//               <p className="text-gray-600">Sign in to your TEadifyz.AI account</p>
 //             </div>
 
 //             <Card className="border-0 shadow-lg">
@@ -346,7 +346,7 @@ const SignIn: React.FC = () => {
               >
                 <ArrowLeft className="w-4 h-4 text-slate-600" />
               </Button>
-              <h1 className="text-xl font-bold gradient-text">SANDWICHLAB AI</h1>
+              <h1 className="text-xl brand-font">TEadifyz.AI</h1>
             </div>
           </div>
         </div>
@@ -357,7 +357,7 @@ const SignIn: React.FC = () => {
             <div className="space-y-6">
               <div className="text-center lg:text-left">
                 <h2 className="text-4xl font-bold mb-3 gradient-text">Welcome Back</h2>
-                <p className="text-slate-600 text-lg">Sign in to your SANDWICHLAB AI account</p>
+                <p className="text-slate-600 text-lg">Sign in to your <span className="brand-font-alt">TEadifyz.AI</span> account</p>
               </div>
 
               <Card className="glass-card rounded-3xl shadow-2xl border-0 transition-modern">
@@ -476,7 +476,7 @@ const SignIn: React.FC = () => {
             {/* Right Column - Benefits */}
             <div className="space-y-6">
               <div className="space-y-4">
-                <h3 className="text-3xl font-bold gradient-text">Welcome Back to SANDWICHLAB AI</h3>
+                <h3 className="text-3xl font-bold gradient-text">Welcome Back to <span className="brand-font">TEadifyz.AI</span></h3>
                 <p className="text-slate-600 text-lg">Continue your journey with AI-powered advertising</p>
               </div>
 

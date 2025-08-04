@@ -118,8 +118,8 @@ export const Navigation = () => {
               {/* Using Sparkles icon as placeholder for treez logo */}
               <Sparkles className="w-6 h-6 text-white" />
             </div>
-            <span className="text-xl font-bold text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-blue-400 transition-all duration-300">
-              AdNestAI
+            <span className="text-xl brand-font group-hover:scale-105 transition-all duration-300">
+              TEadifyz.AI
             </span>
           </div>
 

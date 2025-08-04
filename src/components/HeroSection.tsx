@@ -430,7 +430,7 @@ export const HeroSection = () => {
 
   const testimonials = [
     {
-      quote: "SANDWICHLAB AI revolutionized our ad campaigns. We saw a 300% increase in ROAS within the first month.",
+      quote: "TEadifyz.AI revolutionized our ad campaigns. We saw a 300% increase in ROAS within the first month.",
       author: "Sarah Johnson",
       role: "Marketing Director, TechCorp",
       avatar: "SJ"
@@ -488,7 +488,7 @@ export const HeroSection = () => {
         </div>
         
         {/* Main content */}
-        <div className="relative z-10 text-center max-w-6xl mx-auto px-6">
+        <div className="relative z-10 text-center max-w-6xl mx-auto px-6 pt-16">
           <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             <div className="flex items-center justify-center gap-2 mb-6">
               <Sparkles className="w-6 h-6 text-purple-400 animate-pulse-glow" />
@@ -498,9 +498,8 @@ export const HeroSection = () => {
             </div>
             
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-              Transform Your
-              <span className="block gradient-text bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
-                Digital Marketing
+              <span className="brand-font">
+                TEadifyz AI
               </span>
             </h1>
             
@@ -588,7 +587,7 @@ export const HeroSection = () => {
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-white mb-4">
-              Why Choose SANDWICHLAB AI?
+              Why Choose <span className="brand-font">TEadifyz.AI</span>?
             </h2>
             <p className="text-xl text-white/70 max-w-3xl mx-auto">
               Experience the future of digital advertising with our cutting-edge AI technology

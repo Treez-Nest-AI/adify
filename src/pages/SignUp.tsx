@@ -70,7 +70,7 @@
 //             >
 //               <ArrowLeft className="w-4 h-4" />
 //             </Button>
-//             <h1 className="text-xl font-semibold">SANDWICHLAB AI</h1>
+//             <h1 className="text-xl font-semibold">TEadifyz.AI</h1>
 //           </div>
 //         </div>
 //       </div>
@@ -321,7 +321,7 @@
 //           {/* Right Column - Benefits */}
 //           <div className="space-y-6">
 //             <div className="space-y-4">
-//               <h3 className="text-2xl font-bold">Why Choose SANDWICHLAB AI?</h3>
+//               <h3 className="text-2xl font-bold">Why Choose TEadifyz.AI?</h3>
 //               <p className="text-gray-600">Join the future of AI-powered advertising</p>
 //             </div>
 
@@ -482,7 +482,7 @@ const SignUp: React.FC = () => {
               >
                 <ArrowLeft className="w-4 h-4 text-slate-600" />
               </Button>
-              <h1 className="text-xl font-bold gradient-text">SANDWICHLAB AI</h1>
+              <h1 className="text-xl brand-font">TEadifyz.AI</h1>
             </div>
           </div>
         </div>
@@ -774,7 +774,7 @@ const SignUp: React.FC = () => {
             {/* Right Column - Features */}
             <div className="space-y-6">
               <div className="space-y-4">
-                <h3 className="text-3xl font-bold gradient-text">Join SANDWICHLAB AI</h3>
+                <h3 className="text-3xl font-bold gradient-text">Join <span className="brand-font">TEadifyz.AI</span></h3>
                 <p className="text-slate-600 text-lg">Transform your advertising with AI-powered creativity</p>
               </div>
 
