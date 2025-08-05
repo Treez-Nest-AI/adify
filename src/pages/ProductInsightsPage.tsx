@@ -1395,6 +1395,8 @@ const ProductInsightsPage = () => {
   // };
 const fetchScreenshot = async (url: string) => {
   try {
+    console.log('🖼️ Attempting to capture screenshot for URL:', url);
+    
     const response = await fetch('http://localhost:5000/api/v1/screenshot', {
       method: 'POST',
       headers: {
@@ -1403,20 +1405,28 @@ const fetchScreenshot = async (url: string) => {
       body: JSON.stringify({ url }),
     });
 
+    console.log('🖼️ Screenshot API response status:', response.status);
+
     if (!response.ok) {
-      throw new Error(`Screenshot API Error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('🖼️ Screenshot API error response:', errorText);
+      throw new Error(`Screenshot API Error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
+    console.log('🖼️ Screenshot API response data:', data);
     
     // Construct full URL for the screenshot
     if (data?.data?.screenshot_url) {
-      return `http://localhost:5000${data.data.screenshot_url}`;
+      const fullUrl = `http://localhost:5000${data.data.screenshot_url}`;
+      console.log('🖼️ Full screenshot URL:', fullUrl);
+      return fullUrl;
     }
     
+    console.log('🖼️ No screenshot URL in response');
     return null;
   } catch (error) {
-    console.error('Screenshot API Error:', error);
+    console.error('🖼️ Screenshot API Error:', error);
     return null;
   }
 };
