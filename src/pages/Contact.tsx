@@ -470,7 +470,7 @@ export default function Contact() {
   ];
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden text-white">
       <Navigation />
       
       {/* Hero Section */}
@@ -501,8 +501,8 @@ export default function Contact() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {contactInfo.map((info, index) => (
-              <Card key={index} className="feature-card card-glow text-center border-0 shadow-none animate-slide-up">
-                <CardContent className="p-6">
+              <Card key={index} className="feature-card card-glow text-center border-0 shadow-none animate-slide-up bg-white/10 ">
+                <CardContent className="p-6 ">
                   <div className={`w-12 h-12 bg-${info.color}-500/20 rounded-lg flex items-center justify-center mx-auto mb-4 animate-float`}
                        style={{animationDelay: `${index}s`}}>
                     <info.icon className={`w-6 h-6 text-${info.color}-400`} />
@@ -521,9 +521,9 @@ export default function Contact() {
       </section>
 
       {/* Contact Form & Departments */}
-      <section className="py-20 animate-on-scroll">
+      <section className="py-20 animate-on-scroll ">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 ">
             {/* Contact Form */}
             <div>
               <div className="mb-8">
@@ -533,7 +533,7 @@ export default function Contact() {
                 </p>
               </div>
 
-              <Card className="feature-card card-glow border-0 shadow-none">
+              <Card className="feature-card card-glow border-0 shadow-none bg-white/10 ">
                 <CardContent className="p-8">
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -618,7 +618,7 @@ export default function Contact() {
 
               <div className="space-y-4">
                 {departments.map((dept, index) => (
-                  <Card key={index} className="feature-card card-glow border-0 shadow-none animate-slide-up"
+                  <Card key={index} className="feature-card card-glow border-0 shadow-none animate-slide-up bg-white/10 "
                         style={{animationDelay: `${index * 0.1}s`}}>
                     <CardContent className="p-6">
                       <div className="flex items-start gap-4">
@@ -654,7 +654,7 @@ export default function Contact() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div>
-              <Card className="feature-card card-glow border-0 shadow-none">
+              <Card className="feature-card card-glow border-0 shadow-none bg-white/10 ">
                 <CardContent className="p-8">
                   <h3 className="text-xl font-semibold mb-4 text-white">Treez Enterprise Headquarters</h3>
                   <div className="space-y-4">
@@ -685,7 +685,7 @@ export default function Contact() {
               </Card>
             </div>
 
-            <div className="feature-card card-glow rounded-lg h-64 flex items-center justify-center">
+            <div className="feature-card card-glow rounded-lg h-64 flex items-center justify-center bg-white/10 ">
               <div className="text-center">
                 <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-4 animate-float" />
                 <p className="text-gray-400">Interactive Map</p>
@@ -709,7 +709,7 @@ export default function Contact() {
             <Button className="btn-glow bg-white text-gray-900 font-semibold px-8 py-4 rounded-lg hover:bg-gray-100 transition-all duration-300 hover:shadow-lg hover:shadow-white/25 hover:scale-105">
               Schedule a Demo
             </Button>
-            <Button variant="outline" className="border-2 border-white text-white font-semibold px-8 py-4 rounded-lg hover:bg-white hover:text-gray-900 transition-all duration-300 hover:shadow-lg hover:shadow-white/25">
+            <Button variant="outline" className="border-2 border-white text-white font-semibold px-8 py-4 rounded-lg bg-white text-gray-900 transition-all duration-300 hadow-lg shadow-white/25">
               Download Brochure
             </Button>
           </div>

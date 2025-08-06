@@ -1,298 +1,19 @@
-// import React, { useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
-// import { ArrowLeft, Eye, EyeOff, Mail, Lock, Shield, Zap, TrendingUp, Users } from 'lucide-react';
-// import { Button } from '@/components/ui/button';
-// import { Input } from '@/components/ui/input';
-// import { Label } from '@/components/ui/label';
-// import { Card, CardContent } from '@/components/ui/card';
-// import { Checkbox } from '@/components/ui/checkbox';
 
-// const SignIn: React.FC = () => {
-//   const navigate = useNavigate();
-//   const [formData, setFormData] = useState({
-//     email: '',
-//     password: '',
-//     rememberMe: false
-//   });
-//   const [showPassword, setShowPassword] = useState(false);
-//   const [isLoading, setIsLoading] = useState(false);
-
-//   const handleInputChange = (field: string, value: string | boolean) => {
-//     setFormData(prev => ({ ...prev, [field]: value }));
-//   };
-
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     setIsLoading(true);
-    
-//     // Simulate API call
-//     setTimeout(() => {
-//       setIsLoading(false);
-//       // Navigate to dashboard or payment plans
-//       navigate('/payment-plans');
-//     }, 2000);
-//   };
-
-//   const isFormValid = () => {
-//     return formData.email && formData.password;
-//   };
-
-//   return (
-//     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-//       {/* Header */}
-//       <div className="bg-white border-b">
-//         <div className="max-w-6xl mx-auto px-6 py-4">
-//           <div className="flex items-center gap-3">
-//             <Button
-//               variant="ghost"
-//               size="sm"
-//               onClick={() => navigate('/')}
-//               className="p-2"
-//             >
-//               <ArrowLeft className="w-4 h-4" />
-//             </Button>
-//             <h1 className="text-xl font-semibold">TEadifyz.AI</h1>
-//           </div>
-//         </div>
-//       </div>
-
-//       <div className="max-w-4xl mx-auto px-6 py-12">
-//         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-//           {/* Left Column - Form */}
-//           <div className="space-y-6">
-//             <div>
-//               <h2 className="text-3xl font-bold mb-2">Welcome Back</h2>
-//               <p className="text-gray-600">Sign in to your TEadifyz.AI account</p>
-//             </div>
-
-//             <Card className="border-0 shadow-lg">
-//               <CardContent className="p-8">
-//                 <form onSubmit={handleSubmit} className="space-y-6">
-//                   {/* Email */}
-//                   <div className="space-y-2">
-//                     <Label htmlFor="email">Email Address</Label>
-//                     <div className="relative">
-//                       <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-//                       <Input
-//                         id="email"
-//                         type="email"
-//                         placeholder="john@company.com"
-//                         value={formData.email}
-//                         onChange={(e) => handleInputChange('email', e.target.value)}
-//                         className="pl-10"
-//                         required
-//                       />
-//                     </div>
-//                   </div>
-
-//                   {/* Password */}
-//                   <div className="space-y-2">
-//                     <Label htmlFor="password">Password</Label>
-//                     <div className="relative">
-//                       <Input
-//                         id="password"
-//                         type={showPassword ? 'text' : 'password'}
-//                         placeholder="Enter your password"
-//                         value={formData.password}
-//                         onChange={(e) => handleInputChange('password', e.target.value)}
-//                         required
-//                       />
-//                       <Button
-//                         type="button"
-//                         variant="ghost"
-//                         size="sm"
-//                         className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1"
-//                         onClick={() => setShowPassword(!showPassword)}
-//                       >
-//                         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-//                       </Button>
-//                     </div>
-//                   </div>
-
-//                   {/* Remember Me & Forgot Password */}
-//                   <div className="flex items-center justify-between">
-//                     <div className="flex items-center space-x-2">
-//                       <Checkbox
-//                         id="rememberMe"
-//                         checked={formData.rememberMe}
-//                         onCheckedChange={(checked) => handleInputChange('rememberMe', checked as boolean)}
-//                       />
-//                       <Label htmlFor="rememberMe" className="text-sm">
-//                         Remember me
-//                       </Label>
-//                     </div>
-//                     <Button variant="link" className="p-0 h-auto text-sm">
-//                       Forgot password?
-//                     </Button>
-//                   </div>
-
-//                   {/* Sign In Button */}
-//                   <Button
-//                     type="submit"
-//                     className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3"
-//                     disabled={!isFormValid() || isLoading}
-//                   >
-//                     {isLoading ? 'Signing In...' : 'Sign In'}
-//                   </Button>
-
-//                   {/* Social Sign In */}
-//                   <div className="relative">
-//                     <div className="absolute inset-0 flex items-center">
-//                       <span className="w-full border-t" />
-//                     </div>
-//                     <div className="relative flex justify-center text-xs uppercase">
-//                       <span className="bg-white px-2 text-gray-500">Or continue with</span>
-//                     </div>
-//                   </div>
-
-//                   <div className="grid grid-cols-2 gap-3">
-//                     <Button variant="outline" className="w-full">
-//                       <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
-//                         <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-//                         <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-//                         <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-//                         <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-//                       </svg>
-//                       Google
-//                     </Button>
-//                     <Button variant="outline" className="w-full">
-//                       <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
-//                         <path fill="currentColor" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-//                       </svg>
-//                       Facebook
-//                     </Button>
-//                   </div>
-//                 </form>
-
-//                 <div className="mt-6 text-center">
-//                   <p className="text-sm text-gray-600">
-//                     Don't have an account?{' '}
-//                     <Button variant="link" className="p-0 h-auto text-sm" onClick={() => navigate('/signup')}>
-//                       Sign Up
-//                     </Button>
-//                   </p>
-//                 </div>
-//               </CardContent>
-//             </Card>
-//           </div>
-
-//           {/* Right Column - Benefits */}
-//           <div className="space-y-6">
-//             <div className="space-y-4">
-//               <h3 className="text-2xl font-bold">Welcome Back to SANDWICHLAB AI</h3>
-//               <p className="text-gray-600">Continue your journey with AI-powered advertising</p>
-//             </div>
-
-//             <div className="space-y-4">
-//               <div className="flex items-start gap-3">
-//                 <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-//                   <Shield className="w-4 h-4 text-blue-600" />
-//                 </div>
-//                 <div>
-//                   <h4 className="font-semibold mb-1">Secure Access</h4>
-//                   <p className="text-sm text-gray-600">Your data is protected with enterprise-grade security</p>
-//                 </div>
-//               </div>
-
-//               <div className="flex items-start gap-3">
-//                 <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-//                   <Zap className="w-4 h-4 text-purple-600" />
-//                 </div>
-//                 <div>
-//                   <h4 className="font-semibold mb-1">Quick Setup</h4>
-//                   <p className="text-sm text-gray-600">Get back to creating ads in seconds</p>
-//                 </div>
-//               </div>
-
-//               <div className="flex items-start gap-3">
-//                 <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-//                   <TrendingUp className="w-4 h-4 text-green-600" />
-//                 </div>
-//                 <div>
-//                   <h4 className="font-semibold mb-1">Performance Tracking</h4>
-//                   <p className="text-sm text-gray-600">Monitor your campaign performance in real-time</p>
-//                 </div>
-//               </div>
-
-//               <div className="flex items-start gap-3">
-//                 <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-//                   <Users className="w-4 h-4 text-orange-600" />
-//                 </div>
-//                 <div>
-//                   <h4 className="font-semibold mb-1">Team Collaboration</h4>
-//                   <p className="text-sm text-gray-600">Work together with your team on campaigns</p>
-//                 </div>
-//               </div>
-//             </div>
-
-//             <Card className="bg-gradient-to-r from-green-50 to-blue-50 border-green-200">
-//               <CardContent className="p-6">
-//                 <h4 className="font-semibold mb-2">Your Campaigns</h4>
-//                 <p className="text-sm text-gray-600 mb-4">
-//                   Access all your active campaigns and performance data
-//                 </p>
-//                 <div className="flex items-center gap-2">
-//                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-//                   <span className="text-sm text-gray-600">All systems operational</span>
-//                 </div>
-//               </CardContent>
-//             </Card>
-
-//             {/* Recent Activity */}
-//             <Card className="border-gray-200">
-//               <CardContent className="p-6">
-//                 <h4 className="font-semibold mb-4">Recent Activity</h4>
-//                 <div className="space-y-3">
-//                   <div className="flex items-center gap-3">
-//                     <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-//                     <div className="flex-1">
-//                       <p className="text-sm font-medium">Campaign "Summer Sale" updated</p>
-//                       <p className="text-xs text-gray-500">2 hours ago</p>
-//                     </div>
-//                   </div>
-//                   <div className="flex items-center gap-3">
-//                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-//                     <div className="flex-1">
-//                       <p className="text-sm font-medium">New ad creative generated</p>
-//                       <p className="text-xs text-gray-500">1 day ago</p>
-//                     </div>
-//                   </div>
-//                   <div className="flex items-center gap-3">
-//                     <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-//                     <div className="flex-1">
-//                       <p className="text-sm font-medium">Performance report ready</p>
-//                       <p className="text-xs text-gray-500">3 days ago</p>
-//                     </div>
-//                   </div>
-//                 </div>
-//               </CardContent>
-//             </Card>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default SignIn; 
-
-
-
-
-
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { useLocation } from 'wouter';
-import { ArrowLeft, Eye, EyeOff, Mail, Lock, Shield, Zap, TrendingUp, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Eye, EyeOff, Mail, Shield, Zap, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Check, ChevronLeft } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
+// import {ForgotPassword} from '@/pages/ForgotPassword'
 import { Checkbox } from '@/components/ui/checkbox';
 
-const SignIn: React.FC = () => {
-  const navigate = useNavigate();
+const SignIn = () => {
   const [, setLocation] = useLocation();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -312,8 +33,9 @@ const SignIn: React.FC = () => {
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
-      // Navigate to dashboard or payment plans
-      navigate('/payment-plans');
+      // Navigate to dashboard or next page
+      navigate('/')
+      console.log('Sign in successful', formData);
     }, 2000);
   };
 
@@ -322,257 +44,276 @@ const SignIn: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden text-white">
       {/* Animated Background */}
-      <div className="fixed inset-0 animated-bg opacity-5 -z-10"></div>
-      
-      {/* Floating Elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full opacity-10 floating-element"></div>
-        <div className="absolute top-3/4 right-1/4 w-48 h-48 bg-gradient-to-r from-pink-400 to-red-500 rounded-full opacity-10 floating-element" style={{ animationDelay: '-2s' }}></div>
-        <div className="absolute top-1/2 right-1/3 w-32 h-32 bg-gradient-to-r from-green-400 to-blue-500 rounded-full opacity-10 floating-element" style={{ animationDelay: '-4s' }}></div>
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full floating-element"></div>
+        <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full floating-element" style={{ animationDelay: '-2s' }}></div>
+        <div className="absolute bottom-1/4 left-1/4 w-40 h-40 bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-full floating-element" style={{ animationDelay: '-4s' }}></div>
+        <div className="absolute top-1/3 right-1/4 w-28 h-28 bg-gradient-to-r from-pink-500/20 to-red-500/20 rounded-full floating-element" style={{ animationDelay: '-1s' }}></div>
+        
+        {/* Grid pattern overlay */}
+        <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '50px 50px' }}></div>
       </div>
 
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-        {/* Header */}
-        <div className="glass-effect sticky top-0 z-50">
-          <div className="max-w-6xl mx-auto px-6 py-4">
-            <div className="flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/')}
-                className="glass-button p-2 rounded-xl hover:scale-105 transition-modern"
-              >
-                <ArrowLeft className="w-4 h-4 text-slate-600" />
-              </Button>
-              <h1 className="text-xl brand-font">TEadifyz.AI</h1>
+      {/* Page Toggle Navigation */}
+      <div className='mt-6 ml-8'>
+      <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate('/')}
+            className=" bg-btn-gradient px-4 py-2 text-white font-medium rounded-xl border-0 hover:border-0"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            <span>Back</span>
+          </Button>
+      </div>
+      <div className="fixed top-6 right-6 z-50 flex gap-2">
+      
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/signup')}
+          className="glass-dark px-4 py-2 rounded-xl text-sm font-medium text-white hover:scale-105 transition-all duration-300"
+        >
+          Sign Up
+        </Button>
+        <Button
+          variant="ghost"
+          className="glass-dark px-4 py-2 rounded-xl text-sm font-medium text-white hover:scale-105 transition-all duration-300 bg-gradient-to-r from-blue-500/20 to-purple-500/20"
+        >
+          Sign In
+        </Button>
+      </div>
+
+      <div className="min-h-screen flex page-transition">
+        {/* Left Content Panel - 30% width */}
+        <div className="hidden lg:block lg:w-[30%] relative animate-slide-in-left">
+          <div className="h-full flex flex-col justify-center px-8 xl:px-10">
+            {/* Logo and Brand */}
+            <div className="mb-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center animate-pulse-glow">
+                  <Zap className="w-5 h-5 text-white" />
+                </div>
+                <h1 className="text-2xl font-bold gradient-text">TEadifyz.AI</h1>
+              </div>
+
+              <h2 className="text-3xl xl:text-4xl font-bold mb-4 leading-tight">
+                Welcome Back to
+                <span className="gradient-text"> Your AI</span>
+                <br />Advertising Hub
+              </h2>
+
+              <p className="text-lg text-gray-300 mb-8 leading-relaxed">
+                Continue your AI-powered advertising journey and unlock the full potential of your campaigns.
+              </p>
+            </div>
+
+            {/* Benefits Cards */}
+            <div className="space-y-4 mb-8">
+              <div className="card-hover glass-dark rounded-xl p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 icon-gradient-blue rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Shield className="text-white w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-sm text-gray-100">Secure Access</h4>
+                    <p className="text-xs text-gray-400">Enterprise-grade security</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="card-hover glass-dark rounded-xl p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 icon-gradient-purple rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Zap className="text-white w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-sm text-gray-100">Quick Setup</h4>
+                    <p className="text-xs text-gray-400">Get back to creating ads</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="card-hover glass-dark rounded-xl p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 icon-gradient-green rounded-lg flex items-center justify-center flex-shrink-0">
+                    <TrendingUp className="text-white w-4 h-4" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-sm text-gray-100">Performance Tracking</h4>
+                    <p className="text-xs text-gray-400">Real-time analytics</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Performance Stats */}
+            <div className="flex justify-between text-gray-400">
+              <div className="text-center">
+                <div className="text-xl font-bold text-white">98%</div>
+                <div className="text-xs">Uptime</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl font-bold text-white">24/7</div>
+                <div className="text-xs">Support</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl font-bold text-white">5min</div>
+                <div className="text-xs">Setup Time</div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto px-6 py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Left Column - Form */}
-            <div className="space-y-6">
-              <div className="text-center lg:text-left">
-                <h2 className="text-4xl font-bold mb-3 gradient-text">Welcome Back</h2>
-                <p className="text-slate-600 text-lg">Sign in to your <span className="brand-font-alt">TEadifyz.AI</span> account</p>
+        {/* Right Form Panel - 70% width */}
+        <div className="w-full lg:w-[70%] flex items-center justify-center p-6 lg:p-12 animate-slide-in-right">
+          <div className="w-full max-w-2xl">
+            {/* Mobile Logo */}
+            <div className="lg:hidden text-center mb-8">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                  <Zap className="w-5 h-5 text-white" />
+                </div>
+                <h1 className="text-2xl font-bold gradient-text">TEadifyz.AI</h1>
               </div>
+              <h2 className="text-2xl font-bold mb-2">Welcome Back</h2>
+              <p className="text-gray-400">Continue your AI advertising journey</p>
+            </div>
 
-              <Card className="glass-card rounded-3xl shadow-2xl border-0 transition-modern">
-                <CardContent className="p-8">
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Email */}
-                    <div className="space-y-2">
-                      <Label htmlFor="email" className="text-sm font-medium text-slate-700">Email Address</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-                        <Input
-                          id="email"
-                          type="email"
-                          placeholder="john@company.com"
-                          value={formData.email}
-                          onChange={(e) => handleInputChange('email', e.target.value)}
-                          className="glass-input input-focus-modern w-full pl-12 pr-4 py-4 rounded-2xl text-slate-700 placeholder-slate-400 border-0 focus:outline-none"
-                          required
-                        />
-                      </div>
-                    </div>
+            {/* Sign In Form Container */}
+            <Card className="glass-dark rounded-3xl shadow-2xl  bg-white/10 ">
+              <CardContent className="p-8 lg:p-12">
+                <div className="text-center mb-8">
+                  <h3 className="text-3xl lg:text-4xl font-bold mb-2 text-white">Welcome Back</h3>
+                  <p className="text-gray-400 text-lg lg:text-xl">Access your <span className="gradient-text">TEadifyz.AI</span> account</p>
+                </div>
 
-                    {/* Password */}
-                    <div className="space-y-2">
-                      <Label htmlFor="password" className="text-sm font-medium text-slate-700">Password</Label>
-                      <div className="relative">
-                        <Input
-                          id="password"
-                          type={showPassword ? 'text' : 'password'}
-                          placeholder="Enter your password"
-                          value={formData.password}
-                          onChange={(e) => handleInputChange('password', e.target.value)}
-                          className="glass-input input-focus-modern w-full pl-4 pr-12 py-4 rounded-2xl text-slate-700 placeholder-slate-400 border-0 focus:outline-none"
-                          required
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-4 top-1/2 transform -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 transition-modern"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Remember Me & Forgot Password */}
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="rememberMe"
-                          checked={formData.rememberMe}
-                          onCheckedChange={(checked) => handleInputChange('rememberMe', checked as boolean)}
-                          className="w-4 h-4 text-blue-600 bg-transparent border-slate-300 rounded focus:ring-blue-500"
-                        />
-                        <Label htmlFor="rememberMe" className="text-sm text-slate-600 cursor-pointer">
-                          Remember me
-                        </Label>
-                      </div>
-                      <Button variant="link" className="p-0 h-auto text-sm text-blue-600 hover:text-blue-700 font-medium transition-modern">
-                        Forgot password?
-                      </Button>
-                    </div>
-
-                    {/* Sign In Button */}
-                    <Button
-                      type="submit"
-                      className="w-full btn-modern py-4 rounded-2xl font-semibold text-lg shadow-lg"
-                      disabled={!isFormValid() || isLoading}
-                    >
-                      {isLoading ? 'Signing In...' : 'Sign In'}
-                    </Button>
-
-                    {/* Social Sign In */}
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Email Field */}
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-sm font-medium text-gray-300">Email Address</Label>
                     <div className="relative">
-                      <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-slate-200"></div>
-                      </div>
-                      <div className="relative flex justify-center text-sm">
-                        <span className="bg-slate-50 px-4 text-slate-500">Or continue with</span>
-                      </div>
+                      <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="john@company.com"
+                        value={formData.email}
+                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        className="glass-input w-full pl-12 pr-4 py-4 rounded-2xl placeholder:text-gray-500 border-0 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                        required
+                      />
                     </div>
+                  </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <Button variant="outline" className="glass-button py-3 px-4 rounded-2xl flex items-center justify-center space-x-2 font-medium text-slate-600 border-0">
-                        <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
-                          <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                          <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                          <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                          <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                        </svg>
-                        Google
+                  {/* Password Field */}
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-sm font-medium text-gray-300">Password</Label>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="Enter your password"
+                        value={formData.password}
+                        onChange={(e) => handleInputChange('password', e.target.value)}
+                        className="glass-input w-full pl-4 pr-12 py-4 rounded-2xl placeholder:text-gray-500 border-0 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                        required
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-gray-300 transition-modern"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </Button>
-                      <Button variant="outline" className="glass-button py-3 px-4 rounded-2xl flex items-center justify-center space-x-2 font-medium text-slate-600 border-0">
-                        <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
-                          <path fill="currentColor" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                        </svg>
-                        Facebook
-                      </Button>
-                    </div>
-                  </form>
-
-                  <div className="mt-8 text-center">
-                    <p className="text-slate-600">
-                      Don't have an account?{' '}
-                      <Button variant="link" className="p-0 h-auto text-sm text-blue-600 hover:text-blue-700 font-semibold ml-1 transition-modern" onClick={() => navigate('/signup')}>
-                        Sign Up
-                      </Button>
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Right Column - Benefits */}
-            <div className="space-y-6">
-              <div className="space-y-4">
-                <h3 className="text-3xl font-bold gradient-text">Welcome Back to <span className="brand-font">TEadifyz.AI</span></h3>
-                <p className="text-slate-600 text-lg">Continue your journey with AI-powered advertising</p>
-              </div>
-
-              <div className="space-y-4">
-                <div className="glass-card rounded-2xl p-6 card-hover transition-modern">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 icon-gradient-blue rounded-2xl flex items-center justify-center flex-shrink-0">
-                      <Shield className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold mb-2 text-slate-800">Secure Access</h4>
-                      <p className="text-sm text-slate-600">Your data is protected with enterprise-grade security</p>
                     </div>
                   </div>
-                </div>
 
-                <div className="glass-card rounded-2xl p-6 card-hover transition-modern">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 icon-gradient-purple rounded-2xl flex items-center justify-center flex-shrink-0">
-                      <Zap className="w-5 h-5 text-white" />
+                  {/* Remember Me & Forgot Password */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="rememberMe"
+                        checked={formData.rememberMe}
+                        onCheckedChange={(checked) => handleInputChange('rememberMe', checked as boolean)}
+                        className="custom-checkbox"
+                      />
+                      <Label htmlFor="rememberMe" className="text-sm text-gray-300 cursor-pointer">
+                        Remember me
+                      </Label>
                     </div>
-                    <div>
-                      <h4 className="font-semibold mb-2 text-slate-800">Quick Setup</h4>
-                      <p className="text-sm text-slate-600">Get back to creating ads in seconds</p>
+                    <Button variant="link" className="p-0 h-auto text-sm text-blue-400 hover:text-blue-300 font-medium transition-modern"
+                    onClick={() => navigate('/forgot-password')}
+                    >
+                      Forgot password?
+                    </Button>
+                  </div>
+
+                  {/* Sign In Button */}
+                  <Button
+                    type="submit"
+                    className="w-full btn-primary py-4 rounded-2xl font-semibold text-lg shadow-lg text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={!isFormValid() || isLoading}
+                  >
+                    {isLoading ? 'Signing In...' : 'Sign In'}
+                  </Button>
+
+                  {/* Social Sign In Divider */}
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-gray-600/50"></div>
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                      <span className="bg-slate-900/80 px-4 text-gray-400">Or continue with</span>
                     </div>
                   </div>
-                </div>
 
-                <div className="glass-card rounded-2xl p-6 card-hover transition-modern">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 icon-gradient-green rounded-2xl flex items-center justify-center flex-shrink-0">
-                      <TrendingUp className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold mb-2 text-slate-800">Performance Tracking</h4>
-                      <p className="text-sm text-slate-600">Monitor your campaign performance in real-time</p>
-                    </div>
+                  {/* Social Login Buttons */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="social-button glass-dark py-3 px-4 rounded-2xl flex items-center justify-center space-x-2 font-medium text-gray-300 border border-gray-600/30 hover:border-gray-500/50 transition-all"
+                    >
+                      <svg className="w-4 h-4 mr-2 text-red-400" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                      </svg>
+                      Google
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="social-button glass-dark py-3 px-4 rounded-2xl flex items-center justify-center space-x-2 font-medium text-gray-300 border border-gray-600/30 hover:border-gray-500/50 transition-all"
+                    >
+                      <svg className="w-4 h-4 mr-2 text-blue-400" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                      </svg>
+                      Facebook
+                    </Button>
                   </div>
-                </div>
+                </form>
 
-                <div className="glass-card rounded-2xl p-6 card-hover transition-modern">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 icon-gradient-orange rounded-2xl flex items-center justify-center flex-shrink-0">
-                      <Users className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold mb-2 text-slate-800">Team Collaboration</h4>
-                      <p className="text-sm text-slate-600">Work together with your team on campaigns</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <Card className="glass-card rounded-2xl bg-gradient-to-r from-green-50 to-blue-50 border-green-200 transition-modern">
-                <CardContent className="p-6">
-                  <h4 className="font-semibold mb-2 text-slate-800">Your Campaigns</h4>
-                  <p className="text-sm text-slate-600 mb-4">
-                    Access all your active campaigns and performance data
+                {/* Sign Up Link */}
+                <div className="mt-8 text-center">
+                  <p className="text-gray-400">
+                    Don't have an account?{' '}
+                    <Button 
+                      variant="link" 
+                      className="p-0 h-auto text-sm text-blue-400 hover:text-blue-300 font-semibold ml-1 transition-modern" 
+                      onClick={() => navigate('/signup')}
+                    >
+                      Sign Up
+                    </Button>
                   </p>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-green-500 rounded-full pulse-modern"></div>
-                    <span className="text-sm text-slate-600">All systems operational</span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Recent Activity */}
-              <Card className="glass-card rounded-2xl transition-modern">
-                <CardContent className="p-6">
-                  <h4 className="font-semibold mb-4 text-slate-800">Recent Activity</h4>
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-slate-700">Campaign "Summer Sale" updated</p>
-                        <p className="text-xs text-slate-500">2 hours ago</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-slate-700">New ad creative generated</p>
-                        <p className="text-xs text-slate-500">1 day ago</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-slate-700">Performance report ready</p>
-                        <p className="text-xs text-slate-500">3 days ago</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
@@ -581,3 +322,4 @@ const SignIn: React.FC = () => {
 };
 
 export default SignIn;
+
