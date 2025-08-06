@@ -348,7 +348,7 @@ const Features = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden text-white">
       <Navigation />
       
       {/* Hero Section */}
@@ -379,7 +379,7 @@ const Features = () => {
             {features.map((feature, index) => (
               <div 
                 key={index} 
-                className="gradient-border card-glow group hover:scale-105 transition-all duration-300 animate-float"
+                className="gradient-border card-glow group hover:scale-105 transition-all duration-300 rounded-lg bg-white/10  "
                 style={{ animationDelay: feature.delay }}
               >
                 <div className="gradient-border-content p-6">
@@ -388,7 +388,7 @@ const Features = () => {
                       <feature.icon className="w-6 h-6 text-white" />
                     </div>
                     <h3 className="text-xl font-semibold mb-2 text-foreground">{feature.title}</h3>
-                    <p className="text-muted-foreground">
+                    <p className="text-white">
                       {feature.description}
                     </p>
                   </div>
@@ -407,7 +407,7 @@ const Features = () => {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-card/50 animate-fade-in">
+      <section className="py-20 bg-card/50 animate-fade-in ">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16 animate-slide-up">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-foreground">
@@ -418,9 +418,9 @@ const Features = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ">
             {benefits.map((benefit, index) => (
-              <div key={index} className="glass-effect p-6 rounded-xl hover:bg-card/80 transition-all duration-300 card-glow group">
+              <div key={index} className="glass-effect p-6 rounded-xl hover:bg-card/80 transition-all duration-300 card-glow group bg-white/10 ">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-primary/30 transition-colors">
                     <benefit.icon className="w-5 h-5 text-primary" />

@@ -511,7 +511,7 @@ export const HeroSection = () => {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
               <Button 
                 size="lg" 
-                className="text-lg px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 btn-ripple group" 
+                className="text-lg px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 to-blue-700 btn-ripple group" 
                 onClick={handleStartClick}
               >
                 Start Creating Ads
@@ -520,7 +520,7 @@ export const HeroSection = () => {
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="text-lg px-8 py-4 glass-effect border-white/20 text-white hover:bg-white/10" 
+                className="text-lg px-8 py-4 glass-effect border-white/20 text-white bg-white/10" 
                 onClick={handleSignUpClick}
               >
                 <Play className="mr-2 w-5 h-5" />
@@ -533,7 +533,7 @@ export const HeroSection = () => {
               {performanceMetrics.map((metric, index) => (
                 <Card 
                   key={index} 
-                  className={`p-6 glass-effect border-white/10 text-center hover:bg-white/10 transition-all duration-300 transform hover:scale-105 animate-slide-up`}
+                  className={`p-6 glass-effect border-white/10 text-center bg-white/10 transition-all duration-300 transform hover:scale-105 animate-slide-up`}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <metric.icon className={`w-8 h-8 mx-auto mb-3 ${metric.color}`} />
@@ -562,7 +562,7 @@ export const HeroSection = () => {
             {workflowSteps.map((step, index) => (
               <div key={index} className="relative">
                 <Card 
-                  className={`p-8 text-center glass-effect border-white/10 hover:bg-white/5 transition-all duration-500 transform hover:scale-105 animate-slide-up`}
+                  className={`p-8 text-center glass-effect border-white/10 bg-white/5 transition-all duration-500 transform hover:scale-105 animate-slide-up`}
                   style={{ animationDelay: step.delay }}
                 >
                   <div className={`w-16 h-16 bg-gradient-to-r ${step.color} rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg`}>
@@ -598,7 +598,7 @@ export const HeroSection = () => {
             {features.map((feature, index) => (
               <Card 
                 key={index} 
-                className="p-6 text-center glass-effect border-white/10 hover:bg-white/5 transition-all duration-300 transform hover:scale-105 animate-fade-in"
+                className="p-6 text-center glass-effect border-white/10 bg-white/5 transition-all duration-300 transform hover:scale-105 animate-fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <feature.icon className={`w-12 h-12 mx-auto mb-4 ${feature.color}`} />
@@ -626,7 +626,7 @@ export const HeroSection = () => {
             {testimonials.map((testimonial, index) => (
               <Card 
                 key={index} 
-                className="p-8 text-center glass-effect border-white/10 hover:bg-white/5 transition-all duration-300 transform hover:scale-105 animate-slide-up"
+                className="p-8 text-center glass-effect border-white/10 bg-white/5 transition-all duration-300 transform hover:scale-105 animate-slide-up"
                 style={{ animationDelay: `${index * 0.2}s` }}
               >
                 <div className="flex items-center justify-center mb-4">

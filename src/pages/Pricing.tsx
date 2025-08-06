@@ -399,7 +399,7 @@ export default function Pricing() {
   const totalSlides = Math.ceil(services.length / 3);
 
   return (
-    <div className="min-h-screen bg-[hsl(0,0%,0%)] text-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden text-white">
       <Navigation />
       
       {/* Hero Section */}
@@ -432,18 +432,18 @@ export default function Pricing() {
       <section className="py-20 relative">
         <div className="max-w-7xl mx-auto px-6">
           {/* Services Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-12 ">
             {getCurrentServices().map((service, serviceIndex) => (
-              <div key={service.name} className="space-y-6 animate-fade-in" style={{animationDelay: `${serviceIndex * 0.2}s`}}>
-                <div className="text-center">
+              <div key={service.name} className="space-y-6 animate-fade-in " style={{animationDelay: `${serviceIndex * 0.2}s`}}>
+                <div className="text-center ">
                   <div className={`inline-block p-4 rounded-2xl bg-gradient-to-br ${service.color} border ${service.borderColor} mb-4 animate-float`} style={{animationDelay: `${-serviceIndex}s`}}>
                     <service.icon className={`text-2xl ${service.iconColor}`} />
                   </div>
-                  <h2 className="text-3xl font-bold mb-2">{service.name}</h2>
+                  <h2 className="text-3xl font-bold mb-2 ">{service.name}</h2>
                   <p className="text-gray-400">{service.description}</p>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-6 ">
                   {service.tiers.map((tier, tierIndex) => (
                     <div key={`${tier.name}-${tierIndex}`} className="relative">
                       {tier.isPopular && (
@@ -454,7 +454,7 @@ export default function Pricing() {
                         </div>
                       )}
                       
-                      <Card className={`gradient-border card-glow group cursor-pointer transition-all hover:scale-105 ${tier.isPopular ? 'popular-glow' : ''}`}>
+                      <Card className={`gradient-border card-glow group cursor-pointer transition-all hover:scale-105 bg-white/10  ${tier.isPopular ? 'popular-glow' : ''}`}>
                         <div className="gradient-border-content">
                           <CardHeader className={`pb-4 ${tier.isPopular ? 'pt-8' : ''}`}>
                             <div className="flex items-center justify-between">
@@ -518,8 +518,8 @@ export default function Pricing() {
             <p className="text-xl text-gray-400">Everything you need to know about our pricing and plans.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <Card className="glass-effect rounded-2xl card-glow border-gray-700">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 ">
+            <Card className="glass-effect rounded-2xl card-glow border-gray-700 bg-white/10 ">
               <CardHeader>
                 <CardTitle className="text-2xl font-semibold text-white">Can I change my plan anytime?</CardTitle>
               </CardHeader>
@@ -528,7 +528,7 @@ export default function Pricing() {
               </CardContent>
             </Card>
 
-            <Card className="glass-effect rounded-2xl card-glow border-gray-700">
+            <Card className="glass-effect rounded-2xl card-glow border-gray-700 bg-white/10 ">
               <CardHeader>
                 <CardTitle className="text-2xl font-semibold text-white">Is there a free trial?</CardTitle>
               </CardHeader>
@@ -537,7 +537,7 @@ export default function Pricing() {
               </CardContent>
             </Card>
 
-            <Card className="glass-effect rounded-2xl card-glow border-gray-700">
+            <Card className="glass-effect rounded-2xl card-glow border-gray-700 bg-white/10 ">
               <CardHeader>
                 <CardTitle className="text-2xl font-semibold text-white">What payment methods do you accept?</CardTitle>
               </CardHeader>
@@ -546,7 +546,7 @@ export default function Pricing() {
               </CardContent>
             </Card>
 
-            <Card className="glass-effect rounded-2xl card-glow border-gray-700">
+            <Card className="glass-effect rounded-2xl card-glow border-gray-700 bg-white/10 ">
               <CardHeader>
                 <CardTitle className="text-2xl font-semibold text-white">Do you offer refunds?</CardTitle>
               </CardHeader>
