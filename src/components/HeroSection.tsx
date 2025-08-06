@@ -470,22 +470,7 @@ export const HeroSection = () => {
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center">
-        {/* Floating elements */}
-        <div className="absolute top-20 left-10 animate-float opacity-60">
-          <Card className="p-4 glass-effect border-white/10">
-            <Target className="w-8 h-8 text-purple-400" />
-          </Card>
-        </div>
-        <div className="absolute top-32 right-20 animate-float opacity-60" style={{ animationDelay: '2s' }}>
-          <Card className="p-4 glass-effect border-white/10">
-            <Rocket className="w-8 h-8 text-blue-400" />
-          </Card>
-        </div>
-        <div className="absolute bottom-32 left-16 animate-float opacity-60" style={{ animationDelay: '4s' }}>
-          <Card className="p-4 glass-effect border-white/10">
-            <Lightbulb className="w-8 h-8 text-yellow-400" />
-          </Card>
-        </div>
+
         
         {/* Main content */}
         <div className="relative z-10 text-center max-w-6xl mx-auto px-6 pt-16">

@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import PaymentPlans from "./pages/PaymentPlans";
@@ -29,31 +30,33 @@ const CampaignSetupPage = () => (
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/features" element={<Features />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/sign-in" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/payment-plans" element={<PaymentPlans />} />
-          <Route path="/payment-details" element={<PaymentDetails />} />
-          <Route path="/product-insights" element={<ProductInsightsPage />} />
-          <Route path="/product-analysis" element={<ProductAnalysisPage />} />
-          <Route path="/campaign-setup" element={<CampaignSetupPage />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <GoogleOAuthProvider clientId="278428109318-l6iv9e1tfmbihejtd0e3tqkn2q3npltf.apps.googleusercontent.com">
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/features" element={<Features />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/sign-in" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/payment-plans" element={<PaymentPlans />} />
+            <Route path="/payment-details" element={<PaymentDetails />} />
+            <Route path="/product-insights" element={<ProductInsightsPage />} />
+            <Route path="/product-analysis" element={<ProductAnalysisPage />} />
+            <Route path="/campaign-setup" element={<CampaignSetupPage />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </GoogleOAuthProvider>
 );
 
 export default App;
