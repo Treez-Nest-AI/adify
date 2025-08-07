@@ -54,7 +54,7 @@ export function EditProfileModal({ isOpen, onClose, profile }: EditProfileModalP
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md glass-effect border-gray-700">
+      <DialogContent className="sm:max-w-md glass-effect border-gray-700 bg-green-600 z-50 ">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-white">Edit Profile</DialogTitle>
         </DialogHeader>

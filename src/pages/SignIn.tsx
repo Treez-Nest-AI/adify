@@ -193,7 +193,7 @@ const SignIn = () => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Email Field */}
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-medium text-gray-300">Email Address</Label>
+                    <Label htmlFor="email" className="text-sm font-medium text-white">Email Address</Label>
                     <div className="relative">
                       <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <Input
@@ -202,7 +202,7 @@ const SignIn = () => {
                         placeholder="john@company.com"
                         value={formData.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
-                        className="glass-input w-full pl-12 pr-4 py-4 rounded-2xl placeholder:text-gray-500 border-0 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                        className="glass-input w-full bg-gray-800/50 text-white pl-12 pr-4 py-4 rounded-2xl placeholder:text-gray-500 border-0 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                         required
                       />
                     </div>
@@ -210,7 +210,7 @@ const SignIn = () => {
 
                   {/* Password Field */}
                   <div className="space-y-2">
-                    <Label htmlFor="password" className="text-sm font-medium text-gray-300">Password</Label>
+                    <Label htmlFor="password" className="text-sm font-medium text-white">Password</Label>
                     <div className="relative">
                       <Input
                         id="password"
@@ -218,7 +218,7 @@ const SignIn = () => {
                         placeholder="Enter your password"
                         value={formData.password}
                         onChange={(e) => handleInputChange('password', e.target.value)}
-                        className="glass-input w-full pl-4 pr-12 py-4 rounded-2xl placeholder:text-gray-500 border-0 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                        className="glass-input w-full bg-gray-800/50 text-white pl-4 pr-12 py-4 rounded-2xl placeholder:text-gray-500 border-0 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                         required
                       />
                       <Button
@@ -242,7 +242,7 @@ const SignIn = () => {
                         onCheckedChange={(checked) => handleInputChange('rememberMe', checked as boolean)}
                         className="custom-checkbox"
                       />
-                      <Label htmlFor="rememberMe" className="text-sm text-gray-300 cursor-pointer">
+                      <Label htmlFor="rememberMe" className="text-sm text-white cursor-pointer">
                         Remember me
                       </Label>
                     </div>

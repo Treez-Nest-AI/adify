@@ -156,7 +156,7 @@ export const Navigation = () => {
 
                       {/* Dropdown Menu */}
                       {isDropdownOpen && (
-                        <div className="absolute right-0 mt-2 w-72 glass-effect border border-gray-700 rounded-xl shadow-2xl py-2 animate-slide-down">
+                        <div className="absolute right-0 mt-2 w-72 glass-effect border border-gray-700 rounded-xl shadow-2xl py-2 animate-slide-down z-50 glass-effect border-b border-gray-800 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
                           {/* User Info Header */}
                           <div className="px-4 py-3 border-b border-gray-700">
                             <div className="flex items-center gap-3">
@@ -180,7 +180,7 @@ export const Navigation = () => {
                           </div>
 
                           {/* Menu Items */}
-                          <div className="py-2">
+                          <div className="py-2 ">
                             <button 
                               className="dropdown-item w-full text-left px-4 py-2 text-gray-300 hover:text-white flex items-center gap-3"
                               onClick={() => {

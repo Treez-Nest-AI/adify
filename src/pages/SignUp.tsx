@@ -728,7 +728,9 @@ const SignUp = () => {
                   <Button
                     type="button"
                     variant="outline"
-                    className="social-button w-full flex items-center justify-center gap-3 glass-dark py-4 px-6 rounded-2xl text-white font-medium border border-gray-600/30 hover:border-gray-100/50"
+                    className="social-button w-full flex items-center justify-center gap-3 glass-dark py-4 px-6 rounded-2xl text-white font-medium bg-blue-500/20 border border-blue-600 hover:bg-blue-500/30 hover:border-blue-400 transition-colors duration-200 backdrop-blur-md"
+
+
                   >
                     <svg className="w-5 h-5" viewBox="0 0 24 24">
                       <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -742,8 +744,9 @@ const SignUp = () => {
                   <Button
                     type="button"
                     variant="outline"
-                    className="social-button w-full flex items-center justify-center gap-3 glass-dark py-4 px-6 rounded-2xl text-white font-medium border border-gray-600/30 hover:border-gray-500/50"
-                  >
+                    
+                    className="social-button w-full flex items-center justify-center gap-3 glass-dark py-4 px-6 rounded-2xl text-white font-medium bg-blue-500/20 border border-blue-600 hover:bg-blue-500/30 hover:border-blue-400 transition-colors duration-200 backdrop-blur-md"
+>
                     <svg className="w-5 h-5" fill="#1877f2" viewBox="0 0 24 24">
                       <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                     </svg>
@@ -762,7 +765,7 @@ const SignUp = () => {
                 <form onSubmit={handleSubmit} className="space-y-8">
                   {/* Personal Information */}
                   <div className="space-y-6">
-                    <h3 className="text-xl font-semibold flex items-center gap-3">
+                    <h3 className="text-xl font-semibold flex items-center gap-3 text-white">
                       <div className="w-8 h-8 icon-gradient-blue rounded-lg flex items-center justify-center">
                         <User className="w-4 h-4 text-white" />
                       </div>
@@ -772,28 +775,28 @@ const SignUp = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                       {/* First Name */}
                       <div className="space-y-2">
-                        <Label htmlFor="firstName" className="text-sm font-medium text-gray-300">First Name</Label>
+                        <Label htmlFor="firstName" className="text-sm font-medium text-white">First Name</Label>
                         <Input
                           id="firstName"
                           type="text"
                           placeholder="John"
                           value={formData.firstName}
                           onChange={(e) => handleInputChange('firstName', e.target.value)}
-                          className="glass-input w-full px-4 py-4 rounded-2xl  placeholder-gray-500 border-0 focus:outline-none"
+                          className="glass-input bg-gray-800/50 text-white w-full px-4 py-4 rounded-2xl  placeholder-gray-500 border-0 focus:outline-none"
                           required
                         />
                       </div>
 
                       {/* Last Name */}
                       <div className="space-y-2">
-                        <Label htmlFor="lastName" className="text-sm font-medium text-gray-300">Last Name</Label>
+                        <Label htmlFor="lastName" className="text-sm font-medium text-white">Last Name</Label>
                         <Input
                           id="lastName"
                           type="text"
                           placeholder="Doe"
                           value={formData.lastName}
                           onChange={(e) => handleInputChange('lastName', e.target.value)}
-                          className="glass-input w-full px-4 py-4 rounded-2xl placeholder-gray-500 border-0 focus:outline-none"
+                          className="glass-input  bg-gray-800/50 text-white  w-full px-4 py-4 rounded-2xl placeholder-gray-500 border-0 focus:outline-none"
                           required
                         />
                       </div>
@@ -801,7 +804,7 @@ const SignUp = () => {
 
                     {/* Email */}
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-sm font-medium text-gray-300">Email Address</Label>
+                      <Label htmlFor="email" className="text-sm font-medium text-white">Email Address</Label>
                       <div className="relative">
                         <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <Input
@@ -810,7 +813,7 @@ const SignUp = () => {
                           placeholder="john@company.com"
                           value={formData.email}
                           onChange={(e) => handleInputChange('email', e.target.value)}
-                          className="glass-input w-full pl-12 pr-4 py-4 rounded-2xl  placeholder-gray-500 border-0 focus:outline-none"
+                          className="glass-input   bg-gray-800/50 text-white  w-full pl-12 pr-4 py-4 rounded-2xl  placeholder-gray-500 border-0 focus:outline-none"
                           required
                         />
                       </div>
@@ -819,7 +822,7 @@ const SignUp = () => {
                     {/* Password Fields */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <Label htmlFor="password" className="text-sm font-medium text-gray-300">Password</Label>
+                        <Label htmlFor="password" className="text-sm font-medium text-white">Password</Label>
                         <div className="relative">
                           <Input
                             id="password"
@@ -827,7 +830,7 @@ const SignUp = () => {
                             placeholder="Enter password"
                             value={formData.password}
                             onChange={(e) => handleInputChange('password', e.target.value)}
-                            className="glass-input w-full pl-4 pr-12 py-4 rounded-2xl placeholder-gray-500 border-0 focus:outline-none"
+                            className="glass-input   bg-gray-800/50 text-white  w-full pl-4 pr-12 py-4 rounded-2xl placeholder-gray-500 border-0 focus:outline-none"
                             required
                           />
                           <Button
@@ -843,7 +846,7 @@ const SignUp = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-300">Confirm Password</Label>
+                        <Label htmlFor="confirmPassword" className="text-sm font-medium text-white">Confirm Password</Label>
                         <div className="relative">
                           <Input
                             id="confirmPassword"
@@ -851,7 +854,7 @@ const SignUp = () => {
                             placeholder="Confirm password"
                             value={formData.confirmPassword}
                             onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                            className="glass-input w-full pl-4 pr-12 py-4 rounded-2xl  placeholder-gray-500 border-0 focus:outline-none"
+                            className="glass-input w-full  bg-gray-800/50 text-white  pl-4 pr-12 py-4 rounded-2xl  placeholder-gray-500 border-0 focus:outline-none"
                             required
                           />
                           <Button
@@ -877,7 +880,7 @@ const SignUp = () => {
                         onCheckedChange={(checked) => handleInputChange('agreeToTerms', checked as boolean)}
                         className="w-4 h-4 mt-1 text-blue-600 bg-gray-800 border-gray-600 rounded focus:ring-blue-500"
                       />
-                      <Label htmlFor="agreeToTerms" className="text-sm text-gray-300 cursor-pointer">
+                      <Label htmlFor="agreeToTerms" className="text-sm text-white cursor-pointer">
                         I agree to the <Button variant="link" className="p-0 h-auto text-blue-400 hover:text-blue-300">Terms of Service</Button> and <Button variant="link" className="p-0 h-auto text-blue-400 hover:text-blue-300">Privacy Policy</Button>
                       </Label>
                     </div>
@@ -888,7 +891,7 @@ const SignUp = () => {
                         onCheckedChange={(checked) => handleInputChange('marketingEmails', checked as boolean)}
                         className="w-4 h-4 mt-1 text-blue-600 bg-gray-800 border-gray-600 rounded focus:ring-blue-500"
                       />
-                      <Label htmlFor="marketingEmails" className="text-sm text-gray-300 cursor-pointer">
+                      <Label htmlFor="marketingEmails" className="text-sm text-white cursor-pointer">
                         Send me marketing emails about new features and updates
                       </Label>
                     </div>
