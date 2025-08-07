@@ -18,7 +18,7 @@ export const Navigation = () => {
   const { user, isLoading, signOut } = useProfile();
 
   const handleSignIn = () => {
-    setLocation('/sign-in');
+    navigate('/sign-in');
   };
 
   const handleWatchDemo = () => {
@@ -31,6 +31,16 @@ export const Navigation = () => {
     await signOut();
     closeDropdown();
     navigate('/');
+  };
+
+  if (user) {
+    console.log('Profile image URL:', user.picture);
+  }
+
+  // Helper to get initial
+  const getInitial = (name: string | undefined) => {
+    if (!name || name.length === 0) return '?';
+    return name.trim().charAt(0).toUpperCase();
   };
 
   return (
@@ -112,11 +122,18 @@ export const Navigation = () => {
                       >
                         {/* Profile Image */}
                         <div className="relative">
-                                                  <img 
-                          src={user.picture || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM2QjcyODAiLz4KPHN2ZyB4PSIxMCIgeT0iMTAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDNy41ODE3MiAxNCA0IDE3LjU4MTcgNCAyMkgyMEMyMCAxNy41ODE3IDE2LjQxODMgMTQgMTIgMTRaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4KPC9zdmc+'} 
-                          alt="User Profile" 
-                          className="w-10 h-10 rounded-full object-cover profile-avatar transition-all duration-300 border-2 border-transparent group-hover:border-purple-400"
-                        />
+                          <img 
+                            src={user.picture?.trim()}
+                            alt="User Profile" 
+                            onError={e => {
+                              // Replace image with initial if it fails to load
+                              const parent = e.currentTarget.parentElement;
+                              if (parent) {
+                                parent.innerHTML = `<div style='width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:#6B7280;color:white;font-weight:bold;font-size:1.5rem;border-radius:9999px;'>${getInitial(user.name)}</div>`;
+                              }
+                            }}
+                            className="w-10 h-10 rounded-full object-cover profile-avatar transition-all duration-300 border-2 border-transparent group-hover:border-purple-400"
+                          />
                           <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-black rounded-full"></div>
                         </div>
                         
@@ -144,8 +161,14 @@ export const Navigation = () => {
                           <div className="px-4 py-3 border-b border-gray-700">
                             <div className="flex items-center gap-3">
                               <img 
-                                src={user.picture || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM2QjcyODAiLz4KPHN2ZyB4PSIxMCIgeT0iMTAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDNy41ODE3MiAxNCA0IDE3LjU4MTcgNCAyMkgyMEMyMCAxNy41ODE3IDE2LjQxODMgMTQgMTIgMTRaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4KPC9zdmc+'} 
+                                src={user.picture?.trim()}
                                 alt="User Profile" 
+                                onError={e => {
+                                  const parent = e.currentTarget.parentElement;
+                                  if (parent) {
+                                    parent.innerHTML = `<div style='width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:#6B7280;color:white;font-weight:bold;font-size:2rem;border-radius:9999px;'>${getInitial(user.name)}</div>`;
+                                  }
+                                }}
                                 className="w-12 h-12 rounded-full object-cover profile-avatar"
                               />
                               <div>
@@ -215,8 +238,14 @@ export const Navigation = () => {
               {user && (
                 <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-700 mb-2">
                   <img 
-                    src={user.picture || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM2QjcyODAiLz4KPHN2ZyB4PSIxMCIgeT0iMTAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIj4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDNy41ODE3MiAxNCA0IDE3LjU4MTcgNCAyMkgyMEMyMCAxNy41ODE3IDE2LjQxODMgMTQgMTIgMTRaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4KPC9zdmc+'} 
+                    src={user.picture?.trim()}
                     alt="User Profile" 
+                    onError={e => {
+                      const parent = e.currentTarget.parentElement;
+                      if (parent) {
+                        parent.innerHTML = `<div style='width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:#6B7280;color:white;font-weight:bold;font-size:2rem;border-radius:9999px;'>${getInitial(user.name)}</div>`;
+                      }
+                    }}
                     className="w-12 h-12 rounded-full object-cover profile-avatar"
                   />
                   <div>

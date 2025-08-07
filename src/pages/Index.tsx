@@ -84,6 +84,7 @@ const Index = () => {
   };
 
   const handleGenerateAds = () => {
+    console.log('Generate Proposal clicked');
     setCurrentStep('preview');
   };
 
@@ -91,6 +92,7 @@ const Index = () => {
     setCurrentStep('upload');
   };
 
+  console.log('Current step:', currentStep);
   return (
     <div className="min-h-screen bg-background">
       <Navigation />

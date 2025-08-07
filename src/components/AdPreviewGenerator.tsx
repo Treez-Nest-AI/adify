@@ -60,7 +60,7 @@ export const AdPreviewGenerator = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="py-20 px-6 bg-background">
+    <section className="py-20 px-6 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-2 mb-4">

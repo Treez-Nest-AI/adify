@@ -17,6 +17,7 @@ import {
   ArrowLeft,
   Sparkles
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface CampaignSetupProps {
   onBack?: () => void;
@@ -24,6 +25,7 @@ interface CampaignSetupProps {
 }
 
 export const CampaignSetup = ({ onBack, onGenerate }: CampaignSetupProps) => {
+  const navigate = useNavigate();
   const [projectName, setProjectName] = useState("");
   const [selectedGoal, setSelectedGoal] = useState("Traffic");
   const [conversionButton, setConversionButton] = useState("");
@@ -64,18 +66,7 @@ export const CampaignSetup = ({ onBack, onGenerate }: CampaignSetupProps) => {
   };
 
   const handleGenerate = () => {
-    if (onGenerate) {
-      onGenerate();
-    } else {
-      console.log("Generate proposal:", {
-        projectName,
-        selectedGoal,
-        conversionButton,
-        startDate,
-        endDate,
-        targetCities
-      });
-    }
+    navigate('/ad-preview');
   };
 
   return (

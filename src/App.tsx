@@ -19,6 +19,7 @@ import ProductInsightsPage from "./pages/ProductInsightsPage";
 import ProductAnalysisPage from "./pages/ProductAnalysisPage";
 import { CampaignSetup } from "@/components/CampaignSetup";
 import { Navigation } from "@/components/Navigation";
+import { AdPreviewGenerator } from "./components/AdPreviewGenerator";
 
 const CampaignSetupPage = () => (
   <div className="min-h-screen bg-background">
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="/product-insights" element={<ProductInsightsPage />} />
             <Route path="/product-analysis" element={<ProductAnalysisPage />} />
             <Route path="/campaign-setup" element={<CampaignSetupPage />} />
+            <Route path="/ad-preview" element={<AdPreviewGenerator />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
