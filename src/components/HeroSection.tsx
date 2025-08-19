@@ -1,12 +1,662 @@
 
 
+// import { useState, useEffect } from "react";
+// import { Button } from "@/components/ui/button";
+// import { Navigate, useNavigate } from "react-router-dom";
+// import { Navigation } from "./Navigation";
+// import { Card } from "@/components/ui/card";
+// import { Badge } from "@/components/ui/badge";
+// import { Input } from "@/components/ui/input";
+// import { Label } from "@/components/ui/label";
+// import { useLocation } from "wouter";
+// import axios from "axios";
+// import { 
+//   ArrowRight, 
+//   Sparkles, 
+//   Target, 
+//   TrendingUp, 
+//   Zap, 
+//   BarChart3, 
+//   Users, 
+//   MessageSquare, 
+//   Globe,
+//   Smartphone,
+//   Brain,
+//   Camera,
+//   Link,
+//   Upload,
+//   Star,
+//   Loader2
+// } from "lucide-react";
+// import { motion, AnimatePresence } from "framer-motion";
+
+// type InputTab = 'website' | 'images';
+
+// export const HeroSection = () => {
+//   const navigate = useNavigate()
+//   const [, setLocation] = useLocation();
+//   const [isVisible, setIsVisible] = useState(false);
+//   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  
+//   // Form states for preview
+//   const [activeTab, setActiveTab] = useState<InputTab>('website');
+//   const [websiteUrl, setWebsiteUrl] = useState('');
+//   const [description, setDescription] = useState('');
+  
+//   useEffect(() => {
+//     setIsVisible(true);
+//   }, []);
+
+//   // Handle analyze button - call API and redirect
+//   const handleAnalyze = async () => {
+//     if (activeTab === 'website' && !websiteUrl.trim()) {
+//       alert('Please enter a website URL');
+//       return;
+//     }
+
+//     setIsAnalyzing(true);
+    
+//     try {
+//       // Prepare the request data
+//       const requestData = {
+//         url: activeTab === 'website' ? websiteUrl.trim() : '',
+        
+//       };
+
+//       // Call the API
+//       const response = await axios.post(
+//         'https://digi-ai.app.n8n.cloud/webhook/d664dc96-6d9d-419b-aee8-c1cf23dd8fb2/nest-ai/projectbrief',
+//         requestData,
+//         {
+//           headers: {
+//             'Content-Type': 'application/json',
+//           },
+//           timeout: 60000 // 60 second timeout
+//         }
+//       );
+
+//       // Store the API response data
+//       if (response.data && response.data.length > 0) {
+//         const analysisData = response.data[0]?.message?.content;
+//         if (analysisData) {
+//           // Store the analysis data for the product insights page
+//           const storageData = {
+//             analysisData,
+//             originalUrl: websiteUrl,
+//             originalDescription: description,
+//             activeTab,
+//             timestamp: new Date().toISOString()
+//           };
+          
+//           // Store data in sessionStorage (avoiding localStorage as per instructions)
+//           sessionStorage.setItem('productAnalysis', JSON.stringify(storageData));
+          
+//           // Navigate to product insights page
+//           navigate('/product-insights');
+//         } else {
+//           throw new Error('Invalid response format from API');
+//         }
+//       } else {
+//         throw new Error('No analysis data received from API');
+//       }
+//     } catch (error) {
+//       console.error('API call failed:', error);
+      
+//       // Show user-friendly error message
+//       let errorMessage = 'Analysis failed. Please try again.';
+//       if (error.code === 'ECONNABORTED') {
+//         errorMessage = 'Request timed out. Please try again.';
+//       } else if (error.response?.status === 400) {
+//         errorMessage = 'Invalid website URL. Please check and try again.';
+//       } else if (error.response?.status >= 500) {
+//         errorMessage = 'Server error. Please try again later.';
+//       }
+      
+//       alert(errorMessage);
+//     } finally {
+//       setIsAnalyzing(false);
+//     }
+//   };
+
+//   const performanceMetrics = [
+//     { value: "3x", label: "ROI Increase", icon: TrendingUp, color: "text-emerald-500" },
+//     { value: "50%", label: "Cost Reduction", icon: BarChart3, color: "text-blue-500" },
+//     { value: "24/7", label: "AI Monitoring", icon: Brain, color: "text-purple-500" },
+//     { value: "18000+", label: "Active Users", icon: Users, color: "text-orange-500" }
+//   ];
+
+//   const workflowSteps = [
+//     {
+//       title: "Upload Content",
+//       description: "Website, images, or descriptions",
+//       icon: Globe,
+//       color: "from-blue-500 to-cyan-500",
+//       delay: "0s"
+//     },
+//     {
+//       title: "AI Analysis",
+//       description: "Deep business intelligence",
+//       icon: Brain,
+//       color: "from-purple-500 to-pink-500",
+//       delay: "0.2s"
+//     },
+//     {
+//       title: "Generate Ads",
+//       description: "High-converting creatives",
+//       icon: Target,
+//       color: "from-green-500 to-emerald-500",
+//       delay: "0.4s"
+//     },
+//     {
+//       title: "Launch & Optimize",
+//       description: "24/7 performance monitoring",
+//       icon: TrendingUp,
+//       color: "from-orange-500 to-red-500",
+//       delay: "0.6s"
+//     }
+//   ];
+
+//   const features = [
+//     {
+//       title: "Multi-Platform Support",
+//       description: "Meta, Google, WhatsApp and more",
+//       icon: Smartphone,
+//       color: "text-blue-500"
+//     },
+//     {
+//       title: "AI-Powered Optimization",
+//       description: "Real-time campaign adjustments",
+//       icon: Brain,
+//       color: "text-purple-500"
+//     },
+//     {
+//       title: "Advanced Analytics",
+//       description: "Deep insights & performance tracking",
+//       icon: BarChart3,
+//       color: "text-green-500"
+//     },
+//     {
+//       title: "24/7 Support",
+//       description: "Expert assistance anytime",
+//       icon: MessageSquare,
+//       color: "text-orange-500"
+//     }
+//   ];
+
+//   const testimonials = [
+//     {
+//       quote: "TEadifyz.AI revolutionized our ad campaigns. We saw a 300% increase in ROAS within the first month.",
+//       author: "Sarah Johnson",
+//       role: "Marketing Director, TechCorp",
+//       avatar: "SJ"
+//     },
+//     {
+//       quote: "The AI optimization is incredible. Our costs dropped by 45% while maintaining the same performance.",
+//       author: "Mike Chen",
+//       role: "CEO, StartupXYZ",
+//       avatar: "MC"
+//     },
+//     {
+//       quote: "Setup was incredibly easy. From upload to live campaign in under 5 minutes. Game changer!",
+//       author: "Emma Rodriguez",
+//       role: "Founder, EcomStore",
+//       avatar: "ER"
+//     }
+//   ];
+
+//   const tabs = [
+//     { id: 'website' as InputTab, label: 'Website', icon: Globe, color: 'purple' },
+//     { id: 'images' as InputTab, label: 'Images', icon: Camera, color: 'blue' },
+//   ];
+
+//   return (
+//     <div className="relative min-h-screen bg-white overflow-hidden">
+//       <Navigation />
+      
+//       {/* Animated background particles */}
+//       <div className="absolute inset-0 overflow-hidden">
+//         <div className="absolute top-20 left-10 w-2 h-2 bg-purple-200 rounded-full animate-float opacity-60"></div>
+//         <div className="absolute top-40 right-20 w-3 h-3 bg-blue-200 rounded-full animate-float opacity-40" style={{animationDelay: '2s'}}></div>
+//         <div className="absolute top-60 left-1/4 w-1 h-1 bg-green-200 rounded-full animate-float opacity-50" style={{animationDelay: '4s'}}></div>
+//         <div className="absolute bottom-40 right-1/3 w-2 h-2 bg-orange-200 rounded-full animate-float opacity-30" style={{animationDelay: '6s'}}></div>
+//         <div className="absolute bottom-60 left-1/2 w-3 h-3 bg-purple-200 rounded-full animate-float opacity-40" style={{animationDelay: '8s'}}></div>
+//       </div>
+
+//       {/* Hero Section */}
+//       <section className="relative min-h-screen flex items-center justify-center pt-20">
+//         {/* Main content */}
+//         <div className="relative z-10 text-center max-w-7xl mx-auto px-6">
+//           <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+//             <div className="flex items-center justify-center gap-2 mb-6">
+//               <Sparkles className="w-6 h-6 text-purple-400 animate-pulse-glow" />
+//               <Badge variant="secondary" className="bg-purple-50 text-purple-700 border-purple-200 px-4 py-2">
+//                 AI-Powered Campaign Creation
+//               </Badge>
+//             </div>
+            
+//             <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight" data-testid="hero-title">
+//               Transform Your
+//               <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">
+//                 {' '}Business{' '}
+//               </span>
+//               with AI Ads
+//             </h1>
+            
+//             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed" data-testid="hero-description">
+//               Create high-converting ad campaigns in minutes. Our AI analyzes your business, generates compelling creatives, and optimizes performance across all platforms.
+//             </p>
+            
+//             {/* Performance Metrics */}
+//             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-16">
+//               {performanceMetrics.map((metric, index) => (
+//                 <Card 
+//                   key={index} 
+//                   className="p-6 bg-white border border-gray-200 text-center shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105 animate-slide-up"
+//                   style={{ animationDelay: `${index * 0.1}s` }}
+//                   data-testid={`metric-${index}`}
+//                 >
+//                   <div className="flex items-center justify-center mb-3">
+//                     <div className={`w-12 h-12 ${
+//                       metric.color === 'text-emerald-500' ? 'bg-emerald-50' :
+//                       metric.color === 'text-blue-500' ? 'bg-blue-50' :
+//                       metric.color === 'text-purple-500' ? 'bg-purple-50' :
+//                       'bg-orange-50'
+//                     } rounded-lg flex items-center justify-center`}>
+//                       <metric.icon className={`w-6 h-6 ${metric.color}`} />
+//                     </div>
+//                   </div>
+//                   <div className="text-3xl font-bold text-gray-900 mb-1">{metric.value}</div>
+//                   <div className="text-sm text-gray-600">{metric.label}</div>
+//                 </Card>
+//               ))}
+//             </div>
+
+//             {/* Quick Start Form */}
+//             <div className="max-w-4xl mx-auto mb-16">
+//               <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-lg" data-testid="analysis-form">
+//                 <div className="text-center mb-8">
+//                   <h2 className="text-3xl font-bold text-gray-900 mb-4">Start Your Campaign Analysis</h2>
+//                   <p className="text-gray-600">Upload your content and let our AI create optimized campaigns for you</p>
+//                 </div>
+
+//                 {/* Tab Selection */}
+//                 <div className=" flex flex-row justify-center mb-8">
+//                   <div className="bg-gray-50 p-1 rounded-lg border border-gray-200">
+//                     {tabs.map((tab) => {
+//                       const Icon = tab.icon;
+//                       return (
+//                         <button
+//                           key={tab.id}
+//                           onClick={() => setActiveTab(tab.id)}
+//                           className={`px-6 py-3 rounded-md font-medium transition-all flex items-center space-x-2 ${
+//                             activeTab === tab.id
+//                               ? 'bg-white text-purple-600 shadow-sm border border-gray-200'
+//                               : 'text-gray-600 hover:text-gray-900'
+//                           }`}
+//                           data-testid={`tab-${tab.id}`}
+//                           disabled={isAnalyzing}
+//                         >
+//                           <Icon className="w-4 h-4" />
+//                           <span>{tab.label}</span>
+//                         </button>
+//                       );
+//                     })}
+//                   </div>
+//                 </div>
+
+//                 {/* Content Area */}
+//                 <div className="space-y-6">
+//                   <AnimatePresence mode="wait">
+//                     {activeTab === 'website' && (
+//                       <motion.div
+//                         key="website"
+//                         initial={{ opacity: 0, x: -50 }}
+//                         animate={{ opacity: 1, x: 0 }}
+//                         exit={{ opacity: 0, x: 50 }}
+//                         transition={{ duration: 0.5 }}
+//                       >
+//                         <div>
+//                           <Label htmlFor="website-url" className="block text-sm font-medium text-gray-700 mb-2">
+//                             Website URL *
+//                           </Label>
+//                           <div className="relative">
+//                             <Input
+//                               id="website-url"
+//                               type="url"
+//                               placeholder="https://example.com"
+//                               value={websiteUrl}
+//                               onChange={(e) => setWebsiteUrl(e.target.value)}
+//                               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 pr-10"
+//                               data-testid="input-website-url"
+//                               disabled={isAnalyzing}
+//                               required
+//                             />
+//                             <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+//                               <Link className="w-5 h-5 text-gray-400" />
+//                             </div>
+//                           </div>
+//                         </div>
+
+//                         <div>
+//                           <Label htmlFor="website-description" className="block text-sm font-medium text-gray-700 mb-2">
+//                             Additional Description (Optional)
+//                           </Label>
+//                           <textarea
+//                             id="website-description"
+//                             rows={3}
+//                             placeholder="Any additional information about your website or product..."
+//                             value={description}
+//                             onChange={(e) => setDescription(e.target.value)}
+//                             className="w-full p-4 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
+//                             disabled={isAnalyzing}
+//                           />
+//                         </div>
+//                       </motion.div>
+//                     )}
+
+//                     {activeTab === 'images' && (
+//                       <motion.div
+//                         key="images"
+//                         initial={{ opacity: 0, x: -50 }}
+//                         animate={{ opacity: 1, x: 0 }}
+//                         exit={{ opacity: 0, x: 50 }}
+//                         transition={{ duration: 0.5 }}
+//                         className="space-y-6"
+//                       >
+//                         <div>
+//                           <Label htmlFor="image-title" className="block text-sm font-medium text-gray-700 mb-2">
+//                             Image Title
+//                           </Label>
+//                           <Input
+//                             id="image-title"
+//                             placeholder="Enter a title for the image"
+//                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+//                             data-testid="input-image-title"
+//                             disabled={isAnalyzing}
+//                           />
+//                         </div>
+//                         <div>
+//                           <Label htmlFor="product-price" className="block text-sm font-medium text-gray-700 mb-2">
+//                             Product Price
+//                           </Label>
+//                           <Input
+//                             id="product-price"
+//                             placeholder="Enter a Product Price $10"
+//                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+//                             data-testid="input-product-price"
+//                             disabled={isAnalyzing}
+//                           />
+//                         </div>
+
+//                         <div>
+//                           <Label htmlFor="image-description" className="block text-sm font-medium text-gray-700 mb-2">
+//                             Image Description
+//                           </Label>
+//                           <textarea
+//                             id="image-description"
+//                             rows={4}
+//                             placeholder="Enter a short description for the image"
+//                             className="w-full p-4 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+//                             data-testid="textarea-image-description"
+//                             disabled={isAnalyzing}
+//                           />
+//                         </div>
+
+//                         <motion.div
+//                           className="border-2 border-dashed border-gray-300 rounded-xl p-12 cursor-pointer group hover:border-purple-500 transition-colors duration-300"
+//                           whileHover={{ scale: 1.02 }}
+//                           whileTap={{ scale: 0.98 }}
+//                           data-testid="upload-area"
+//                         >
+//                           <div className="text-center">
+//                             <motion.div
+//                               animate={{ y: [0, -5, 0] }}
+//                               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+//                             >
+//                               <Upload className="w-12 h-12 text-gray-400 mx-auto mb-6 group-hover:text-purple-400 transition-colors duration-300" />
+//                             </motion.div>
+//                             <p className="text-gray-600 mb-4 text-lg">Drag and drop images here, or click to browse</p>
+//                             <Button 
+//                               className="bg-gradient-to-r from-purple-500 to-blue-500 px-6 py-3 rounded-lg text-white font-semibold hover:from-purple-600 hover:to-blue-600 transition-all" 
+//                               data-testid="button-choose-files"
+//                               disabled={isAnalyzing}
+//                             >
+//                               Choose Files
+//                             </Button>
+//                           </div>
+//                         </motion.div>
+//                       </motion.div>
+//                     )}
+//                   </AnimatePresence>
+
+//                   <button
+//                     onClick={handleAnalyze}
+//                     disabled={isAnalyzing || (activeTab === 'website' && !websiteUrl.trim())}
+//                     className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-4 px-8 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all transform hover:scale-[1.02] flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+//                     data-testid="button-analyze"
+//                   >
+//                     {isAnalyzing ? (
+//                       <>
+//                         <Loader2 className="w-5 h-5 animate-spin" />
+//                         <span>Analyzing...</span>
+//                       </>
+//                     ) : (
+//                       <>
+//                         <Sparkles className="w-5 h-5" />
+//                         <span>Analyze with AI</span>
+//                         <ArrowRight className="w-5 h-5" />
+//                       </>
+//                     )}
+//                   </button>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </section>
+
+//       {/* How It Works */}
+//       <section className="py-20 bg-gray-50">
+//         <div className="max-w-7xl mx-auto px-6">
+//           <div className="text-center mb-12">
+//             <h2 className="text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
+//             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+//               From upload to launch in just a few minutes
+//             </p>
+//           </div>
+          
+//           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+//             {workflowSteps.map((step, index) => (
+//               <div key={index} className="relative">
+//                 <Card 
+//                   className="p-8 text-center bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-500 transform hover:scale-105"
+//                   data-testid={`workflow-step-${index}`}
+//                 >
+//                   <div className={`w-16 h-16 bg-gradient-to-r ${step.color} rounded-2xl flex items-center justify-center mx-auto mb-6`}>
+//                     <step.icon className="w-8 h-8 text-white" />
+//                   </div>
+//                   <h3 className="text-xl font-semibold text-gray-900 mb-3">{step.title}</h3>
+//                   <p className="text-gray-600">{step.description}</p>
+//                 </Card>
+//                 {index < workflowSteps.length - 1 && (
+//                   <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gray-200"></div>
+//                 )}
+//               </div>
+//             ))}
+//           </div>
+//         </div>
+//       </section>
+
+//       {/* Features Grid */}
+//       <section className="py-20 bg-white">
+//         <div className="max-w-7xl mx-auto px-6">
+//           <div className="text-center mb-12">
+//             <h2 className="text-4xl font-bold text-gray-900 mb-4">Powerful Features</h2>
+//             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+//               Everything you need to create and manage successful campaigns
+//             </p>
+//           </div>
+
+//           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+//             {features.map((feature, index) => (
+//               <Card key={index} className="p-8 bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all" data-testid={`feature-${index}`}>
+//                 <div className={`w-12 h-12 ${
+//                   feature.color === 'text-blue-500' ? 'bg-blue-50' :
+//                   feature.color === 'text-purple-500' ? 'bg-purple-50' :
+//                   feature.color === 'text-green-500' ? 'bg-green-50' :
+//                   'bg-orange-50'
+//                 } rounded-lg flex items-center justify-center mb-6`}>
+//                   <feature.icon className={`w-6 h-6 ${feature.color}`} />
+//                 </div>
+//                 <h3 className="text-lg font-semibold text-gray-900 mb-3">{feature.title}</h3>
+//                 <p className="text-gray-600">{feature.description}</p>
+//               </Card>
+//             ))}
+//           </div>
+//         </div>
+//       </section>
+
+//       {/* Testimonials */}
+//       <section className="py-20 bg-gray-50">
+//         <div className="max-w-7xl mx-auto px-6">
+//           <div className="text-center mb-12">
+//             <h2 className="text-4xl font-bold text-gray-900 mb-4">What Our Users Say</h2>
+//             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+//               Join thousands of businesses already succeeding with TEadifyz.AI
+//             </p>
+//           </div>
+
+//           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+//             {testimonials.map((testimonial, index) => (
+//               <Card key={index} className="p-8 bg-white border border-gray-200 shadow-sm" data-testid={`testimonial-${index}`}>
+//                 <div className="flex items-center mb-4">
+//                   <div className="flex text-yellow-400">
+//                     {[...Array(5)].map((_, i) => (
+//                       <Star key={i} className="w-5 h-5 fill-current" />
+//                     ))}
+//                   </div>
+//                 </div>
+//                 <blockquote className="text-gray-700 mb-6 italic">
+//                   "{testimonial.quote}"
+//                 </blockquote>
+//                 <div className="flex items-center">
+//                   <div className={`w-12 h-12 ${
+//                     index === 0 ? 'bg-purple-100' : 
+//                     index === 1 ? 'bg-blue-100' : 
+//                     'bg-green-100'
+//                   } rounded-full flex items-center justify-center mr-4`}>
+//                     <span className={`${
+//                       index === 0 ? 'text-purple-600' : 
+//                       index === 1 ? 'text-blue-600' : 
+//                       'text-green-600'
+//                     } font-semibold`}>
+//                       {testimonial.avatar}
+//                     </span>
+//                   </div>
+//                   <div>
+//                     <div className="font-semibold text-gray-900">{testimonial.author}</div>
+//                     <div className="text-gray-600 text-sm">{testimonial.role}</div>
+//                   </div>
+//                 </div>
+//               </Card>
+//             ))}
+//           </div>
+//         </div>
+//       </section>
+
+//       {/* CTA Section */}
+//       <section className="py-20 bg-white">
+//         <div className="max-w-7xl mx-auto px-6">
+//           <div className="text-center">
+//             <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-3xl p-12 text-white" data-testid="cta-section">
+//               <h2 className="text-4xl font-bold mb-4">Ready to Transform Your Ads?</h2>
+//               <p className="text-xl text-purple-100 mb-8 max-w-2xl mx-auto">
+//                 Join thousands of businesses already using AI to create better campaigns
+//               </p>
+//               <Button 
+//                 onClick={() => setLocation('/product-insights')}
+//                 className="bg-white text-purple-600 hover:bg-gray-50 px-8 py-4 rounded-lg font-semibold transition-colors transform hover:scale-105 inline-flex items-center space-x-2"
+//                 data-testid="button-start-trial"
+//               >
+//                 <span>Start Free Trial</span>
+//                 <ArrowRight className="w-5 h-5" />
+//               </Button>
+//             </div>
+//           </div>
+//         </div>
+//       </section>
+
+//       {/* Footer */}
+//       <footer className="bg-gray-50 border-t border-gray-200 py-12">
+//         <div className="max-w-7xl mx-auto px-6">
+//           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+//             <div>
+//               <div className="flex items-center space-x-2 mb-4">
+//                 <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+//                   <Zap className="w-5 h-5 text-white" />
+//                 </div>
+//                 <span className="text-xl font-bold text-gray-900">TEadifyz.AI</span>
+//               </div>
+//               <p className="text-gray-600 mb-4">AI-powered campaign creation for modern businesses.</p>
+//             </div>
+//             <div>
+//               <h3 className="font-semibold text-gray-900 mb-4">Product</h3>
+//               <ul className="space-y-2 text-gray-600">
+//                 <li><a href="#" className="hover:text-purple-600 transition-colors">Features</a></li>
+//                 <li><a href="#" className="hover:text-purple-600 transition-colors">Pricing</a></li>
+//                 <li><a href="#" className="hover:text-purple-600 transition-colors">API</a></li>
+//                 <li><a href="#" className="hover:text-purple-600 transition-colors">Integrations</a></li>
+//               </ul>
+//             </div>
+//             <div>
+//               <h3 className="font-semibold text-gray-900 mb-4">Company</h3>
+//               <ul className="space-y-2 text-gray-600">
+//                 <li><a href="#" className="hover:text-purple-600 transition-colors">About</a></li>
+//                 <li><a href="#" className="hover:text-purple-600 transition-colors">Blog</a></li>
+//                 <li><a href="#" className="hover:text-purple-600 transition-colors">Careers</a></li>
+//                 <li><a href="#" className="hover:text-purple-600 transition-colors">Contact</a></li>
+//               </ul>
+//             </div>
+//             <div>
+//               <h3 className="font-semibold text-gray-900 mb-4">Support</h3>
+//               <ul className="space-y-2 text-gray-600">
+//                 <li><a href="#" className="hover:text-purple-600 transition-colors">Help Center</a></li>
+//                 <li><a href="#" className="hover:text-purple-600 transition-colors">Documentation</a></li>
+//                 <li><a href="#" className="hover:text-purple-600 transition-colors">Status</a></li>
+//                 <li><a href="#" className="hover:text-purple-600 transition-colors">Privacy</a></li>
+//               </ul>
+//             </div>
+//           </div>
+//           <div className="border-t border-gray-200 mt-8 pt-8 text-center text-gray-600">
+//             <p>&copy; 2024 TEadifyz.AI. All rights reserved.</p>
+//           </div>
+//         </div>
+//       </footer>
+//     </div>
+//   );
+// };
+
+
+
+
+
+
+
+
+
+
+
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Navigate, useNavigate } from "react-router-dom";
+import { Navigation } from "./Navigation";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "wouter";
+import axios from "axios";
 import { 
   ArrowRight, 
   Sparkles, 
@@ -16,214 +666,212 @@ import {
   BarChart3, 
   Users, 
   MessageSquare, 
-  Mail, 
-  Play,
-  CheckCircle,
-  Star,
   Globe,
   Smartphone,
-  Monitor,
   Brain,
-  Rocket,
-  Shield,
-  Lightbulb,
   Camera,
   Link,
-  AlertCircle,
   Upload,
-  Type,
-  FileText
+  Star,
+  Loader2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useLocation } from "wouter";
 
 type InputTab = 'website' | 'images';
 
-interface ApiResponse {
-  product_title: string;
-  price_range: string;
-  brand_analysis: string;
-  product_analysis: string;
-  target_audience: string[];
-  key_selling_points: string[];
-  product_description: string;
-}
-
 export const HeroSection = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const [, setLocation] = useLocation();
   const [isVisible, setIsVisible] = useState(false);
   
-  // Analysis form states
+  // Form states for preview
   const [activeTab, setActiveTab] = useState<InputTab>('website');
   const [websiteUrl, setWebsiteUrl] = useState('');
-  const [description, setDescription] = useState('');
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [showInsights, setShowInsights] = useState(false);
-  const [apiResponse, setApiResponse] = useState<ApiResponse | null>(null);
-  const [websiteData, setWebsiteData] = useState<any>(null);
+  const [urlError, setUrlError] = useState('');
   
   useEffect(() => {
     setIsVisible(true);
   }, []);
 
-  // URL validation function
-  const isValidUrl = (url: string): boolean => {
-    try {
-      const urlPattern = /^https?:\/\/.+\..+/;
-      return urlPattern.test(url) && url.length > 0;
-    } catch {
+  // Updated URL validation function - more robust
+const isValidUrl = (url: string) => {
+  if (!url || url.trim() === '') return false;
+  
+  try {
+    // Add protocol if missing
+    const urlToTest = url.startsWith('http://') || url.startsWith('https://') 
+      ? url 
+      : `https://${url}`;
+    
+    // Create URL object to validate
+    const urlObj = new URL(urlToTest);
+    
+    // Check if it has a valid domain structure
+    const domainPattern = /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    
+    // Validate hostname
+    if (!urlObj.hostname || !domainPattern.test(urlObj.hostname)) {
       return false;
     }
-  };
-
-  // API call function
-  const sendUrlToAPI = async (url: string) => {
-    try {
-      const response = await fetch(
-        'https://shashankdoom.app.n8n.cloud/webhook-test/start-campaign-setup',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ url: url }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`API Error: ${response.status} - ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      if (error instanceof TypeError) {
-        throw new Error('Network error: Unable to reach the server');
-      }
-      throw error;
+    
+    // Check for minimum domain structure (at least one dot for TLD)
+    if (!urlObj.hostname.includes('.')) {
+      return false;
     }
+    
+    // Protocol should be http or https
+    if (!['http:', 'https:'].includes(urlObj.protocol)) {
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+// Updated handleUrlChange function with better validation
+const handleUrlChange = (e) => {
+  const value = e.target.value;
+  setWebsiteUrl(value);
+  
+  // Clear error if input is empty
+  if (!value.trim()) {
+    setUrlError('');
+    return;
+  }
+  
+  // Validate URL
+  if (!isValidUrl(value.trim())) {
+    setUrlError('Please enter a valid website URL (e.g., example.com or https://example.com)');
+  } else {
+    setUrlError('');
+  }
+};
+
+// Updated handleAnalyze function with stricter validation
+const handleAnalyze = async () => {
+  if (activeTab === 'website') {
+    const trimmedUrl = websiteUrl.trim();
+    
+    // Check if URL is empty
+    if (!trimmedUrl) {
+      setUrlError('Please enter a website URL');
+      return;
+    }
+    
+    // Validate URL format
+    if (!isValidUrl(trimmedUrl)) {
+      setUrlError('Please enter a valid website URL (e.g., example.com or https://example.com)');
+      return;
+    }
+    
+    // Additional check for minimum length and structure
+    if (trimmedUrl.length < 4 || !trimmedUrl.includes('.')) {
+      setUrlError('Please enter a valid website URL with a domain name');
+      return;
+    }
+  }
+
+  // Prepare the request data
+  const requestData = {
+    url: activeTab === 'website' ? websiteUrl.trim() : '',
   };
 
-  // Handle analyze function
+  // Store request data immediately and navigate
+  const storageData = {
+    originalUrl: websiteUrl,
+    activeTab,
+    timestamp: new Date().toISOString(),
+    requestData
+  };
+  
+  sessionStorage.setItem('productAnalysis', JSON.stringify(storageData));
+  
+  // Navigate immediately to product insights page
+  navigate('/product-insights');
+};
+
+// Alternative even more strict validation function if needed
+const isValidUrlStrict = (url: string) => {
+  if (!url || url.trim() === '') return false;
+  
+  // More comprehensive regex for URL validation
+  const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,})(\/.*)?$/i;
+  
+  // Test the basic pattern first
+  if (!urlPattern.test(url.trim())) {
+    return false;
+  }
+  
+  try {
+    const urlToTest = url.startsWith('http://') || url.startsWith('https://') 
+      ? url 
+      : `https://${url}`;
+    
+    const urlObj = new URL(urlToTest);
+    
+    // Must have a hostname
+    if (!urlObj.hostname) return false;
+    
+    // Must have at least one dot (for TLD)
+    if (!urlObj.hostname.includes('.')) return false;
+    
+    // Hostname should not start or end with dot or dash
+    if (urlObj.hostname.startsWith('.') || urlObj.hostname.endsWith('.') ||
+        urlObj.hostname.startsWith('-') || urlObj.hostname.endsWith('-')) {
+      return false;
+    }
+    
+    // Check for valid TLD (at least 2 characters)
+    const parts = urlObj.hostname.split('.');
+    const tld = parts[parts.length - 1];
+    if (!tld || tld.length < 2) return false;
+    
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+  // Handle analyze button - call API and redirect immediately
   // const handleAnalyze = async () => {
-  //   const fakeData = {
-  //     product_description: 'This is a dummy product description for development.',
-  //     price: '$49',
-  //     product_analysis: 'This product is innovative and useful.',
-  //     product_title: 'Dummy Product',
-  //     price_range: '$40 - $60',
-  //     brand_analysis: 'Dummy Brand is well-known for quality products.',
-  //     target_audience: ['Tech enthusiasts', 'Early adopters'],
-  //     key_selling_points: ['Affordable', 'High quality', 'Great design'],
+  //   if (activeTab === 'website') {
+  //     if (!websiteUrl.trim()) {
+  //       setUrlError('Please enter a website URL');
+  //       return;
+  //     }
+      
+  //     if (!isValidUrl(websiteUrl.trim())) {
+  //       setUrlError('Please enter a valid URL');
+  //       return;
+  //     }
+  //   }
+
+  //   // Prepare the request data
+  //   const requestData = {
+  //     url: activeTab === 'website' ? websiteUrl.trim() : '',
   //   };
 
-  //   // Clear previous messages
-  //   setError('');
-  //   setSuccess('');
-
-  //   // Validation
-  //   if (!websiteUrl.trim()) {
-  //     setError('Please enter a website URL');
-  //     return;
-  //   }
-
-  //   if (!isValidUrl(websiteUrl)) {
-  //     setError('Please enter a valid URL (must start with http:// or https://)');
-  //     return;
-  //   }
-
-  //   setIsAnalyzing(true);
-
-  //   try {
-  //     setSuccess('Analysis complete! Generating insights...');
-      
-  //     // Simulate API delay
-  //     await new Promise(resolve => setTimeout(resolve, 2000));
-      
-  //     setApiResponse(fakeData);
-  //     setWebsiteData({
-  //       url: websiteUrl || 'https://example.com',
-  //       title: extractDomainName(websiteUrl || 'https://example.com'),
-  //       description: fakeData.product_description,
-  //       brand: extractBrandFromUrl(websiteUrl || 'https://example.com'),
-  //       price: fakeData.price,
-  //       details: fakeData.product_analysis,
-  //       image: '/api/placeholder/400/300',
-  //     });
-
-  //     setTimeout(() => {
-  //       setShowInsights(true);
-  //       // Navigate to campaign setup or show insights
-  //       navigate('/campaign-setup');
-  //     }, 1500);
-
-  //   } catch (error) {
-  //     setError(error instanceof Error ? error.message : 'Failed to analyze website');
-  //   } finally {
-  //     setIsAnalyzing(false);
-  //   }
+  //   // Store request data immediately and navigate
+  //   const storageData = {
+  //     originalUrl: websiteUrl,
+  //     activeTab,
+  //     timestamp: new Date().toISOString(),
+  //     requestData
+  //   };
+    
+  //   sessionStorage.setItem('productAnalysis', JSON.stringify(storageData));
+    
+  //   // Navigate immediately to product insights page
+  //   navigate('/product-insights');
   // };
 
-
-
-
-  const handleAnalyze = async () => {
-    const fakeData = {
-      product_description: 'This is a dummy product description for development.',
-      price: '$49',
-      product_analysis: 'This product is innovative and useful.',
-      product_title: 'Dummy Product',
-      price_range: '$40 - $60',
-      brand_analysis: 'Dummy Brand is well-known for quality products.',
-      target_audience: ['Tech enthusiasts', 'Early adopters'], // ✅ fix here
-      key_selling_points: ['Affordable', 'High quality', 'Great design'],
-    };
-  
-    setApiResponse(fakeData);
-  
-    setWebsiteData({
-      url: websiteUrl || 'https://example.com',
-      title: extractDomainName(websiteUrl || 'https://example.com'),
-      description: fakeData.product_description,
-      brand: extractBrandFromUrl(websiteUrl || 'https://example.com'),
-      price: fakeData.price,
-      details: fakeData.product_analysis,
-      image: '/api/placeholder/400/300',
-    });
-  
-    setShowInsights(true);
-  };
-  
-
-  // Helper function to extract domain name
-  const extractDomainName = (url: string): string => {
-    try {
-      const domain = new URL(url).hostname;
-      return domain.replace('www.', '').split('.')[0];
-    } catch {
-      return 'Website Product';
-    }
-  };
-
-  // Helper function to extract brand from URL
-  const extractBrandFromUrl = (url: string): string => {
-    try {
-      const domain = new URL(url).hostname;
-      const brandName = domain.replace('www.', '').split('.')[0];
-      return brandName.charAt(0).toUpperCase() + brandName.slice(1);
-    } catch {
-      return 'Brand';
-    }
-  };
-
   const performanceMetrics = [
-    { value: "3x", label: "ROI Increase", icon: TrendingUp, color: "text-emerald-400" },
-    { value: "50%", label: "Cost Reduction", icon: BarChart3, color: "text-blue-400" },
-    { value: "24/7", label: "AI Monitoring", icon: Brain, color: "text-purple-400" },
-    { value: "18000+", label: "Active Users", icon: Users, color: "text-orange-400" }
+    { value: "3x", label: "ROI Increase", icon: TrendingUp, color: "text-emerald-500" },
+    { value: "50%", label: "Cost Reduction", icon: BarChart3, color: "text-blue-500" },
+    { value: "24/7", label: "AI Monitoring", icon: Brain, color: "text-purple-500" },
+    { value: "18000+", label: "Active Users", icon: Users, color: "text-orange-500" }
   ];
 
   const workflowSteps = [
@@ -243,12 +891,7 @@ export const HeroSection = () => {
     },
     {
       title: "Generate Ads",
-      description: (
-                <div>
-                  <div>High-converting</div>
-                  <div>creatives</div>
-                </div>
-              ),
+      description: "High-converting creatives",
       icon: Target,
       color: "from-green-500 to-emerald-500",
       delay: "0.4s"
@@ -267,25 +910,25 @@ export const HeroSection = () => {
       title: "Multi-Platform Support",
       description: "Meta, Google, WhatsApp and more",
       icon: Smartphone,
-      color: "text-blue-400"
+      color: "text-blue-500"
     },
     {
       title: "AI-Powered Optimization",
       description: "Real-time campaign adjustments",
       icon: Brain,
-      color: "text-purple-400"
+      color: "text-purple-500"
     },
     {
       title: "Advanced Analytics",
       description: "Deep insights & performance tracking",
       icon: BarChart3,
-      color: "text-green-400"
+      color: "text-green-500"
     },
     {
       title: "24/7 Support",
       description: "Expert assistance anytime",
       icon: MessageSquare,
-      color: "text-orange-400"
+      color: "text-orange-500"
     }
   ];
 
@@ -315,239 +958,137 @@ export const HeroSection = () => {
     { id: 'images' as InputTab, label: 'Images', icon: Camera, color: 'blue' },
   ];
 
-  // Animated background particles
-  const particles = Array.from({ length: 9 }, (_, i) => ({
-    id: i,
-    size: Math.random() * 3 + 1,
-    left: (i + 1) * 10,
-    delay: i * 2,
-    duration: 15 + Math.random() * 5
-  }));
-
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden">
+    <div className="relative min-h-screen bg-white overflow-hidden">
+      <Navigation />
+      
       {/* Animated background particles */}
-      <div className="absolute inset-0">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="particle absolute rounded-full opacity-20"
-            style={{
-              left: `${Math.random() * 100}%`,
-              width: `${Math.random() * 6 + 2}px`,
-              height: `${Math.random() * 6 + 2}px`,
-              animationDelay: `${Math.random() * 20}s`,
-              animationDuration: `${Math.random() * 10 + 20}s`
-            }}
-          />
-        ))}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 left-10 w-2 h-2 bg-purple-200 rounded-full animate-float opacity-60"></div>
+        <div className="absolute top-40 right-20 w-3 h-3 bg-blue-200 rounded-full animate-float opacity-40" style={{animationDelay: '2s'}}></div>
+        <div className="absolute top-60 left-1/4 w-1 h-1 bg-green-200 rounded-full animate-float opacity-50" style={{animationDelay: '4s'}}></div>
+        <div className="absolute bottom-40 right-1/3 w-2 h-2 bg-orange-200 rounded-full animate-float opacity-30" style={{animationDelay: '6s'}}></div>
+        <div className="absolute bottom-60 left-1/2 w-3 h-3 bg-purple-200 rounded-full animate-float opacity-40" style={{animationDelay: '8s'}}></div>
       </div>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center">
-        
-        {/* Animated Background Particles */}
-        <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-          {particles.map((particle) => (
-            <motion.div
-              key={particle.id}
-              className="particle absolute rounded-full"
-              style={{
-                width: `${particle.size * 4}px`,
-                height: `${particle.size * 4}px`,
-                left: `${particle.left}%`,
-                background: 'linear-gradient(45deg, rgba(168, 85, 247, 0.4), rgba(59, 130, 246, 0.4))',
-              }}
-              animate={{
-                y: ['100vh', '-100vh'],
-                rotate: [0, 360]
-              }}
-              transition={{
-                duration: particle.duration,
-                repeat: Infinity,
-                delay: particle.delay,
-                ease: "linear"
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Floating Background Elements */}
-        <div className="absolute top-20 left-10 w-20 h-20 bg-purple-500/10 rounded-full blur-xl animate-pulse" />
-        <div className="absolute top-40 right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-xl animate-pulse" style={{ animationDelay: '1s' }} />
-        
+      <section className="relative min-h-screen flex items-center justify-center pt-20">
         {/* Main content */}
-        <div className="relative z-10 text-center max-w-6xl mx-auto px-6 pt-16">
+        <div className="relative z-10 text-center max-w-7xl mx-auto px-6">
           <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             <div className="flex items-center justify-center gap-2 mb-6">
               <Sparkles className="w-6 h-6 text-purple-400 animate-pulse-glow" />
-              <Badge variant="secondary" className="bg-white/10 text-white/90 border-purple-400/30 backdrop-blur-sm">
-                AI-Powered Marketing Platform
+              <Badge variant="secondary" className="bg-purple-50 text-purple-700 border-purple-200 px-4 py-2">
+                AI-Powered Campaign Creation
               </Badge>
             </div>
             
-            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-              <span className="brand-font">
-                TEadifyz AI
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight" data-testid="hero-title">
+              Transform Your
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">
+                {' '}Business{' '}
               </span>
+              with AI Ads
             </h1>
             
-            <p className="text-xl text-white/80 mb-8 max-w-4xl mx-auto leading-relaxed">
-              Upload websites, images, docs, or descriptions. Our AI analyzes your business and generates 
-              high-converting ads across all platforms with intelligent targeting, creatives, and performance forecasting.
+            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed" data-testid="hero-description">
+              Create high-converting ad campaigns in minutes. Our AI analyzes your business, generates compelling creatives, and optimizes performance across all platforms.
             </p>
             
-            {/* Website/Images Analysis Section - Replacing the buttons */}
-            <div className="max-w-4xl mx-auto mb-12">
-              {/* Header */}
-              <motion.div 
-                className="text-center mb-8"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-              >
-                <motion.div 
-                  className="flex items-center justify-center gap-3 mb-6"
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            {/* Performance Metrics */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-16">
+              {performanceMetrics.map((metric, index) => (
+                <Card 
+                  key={index} 
+                  className="p-6 bg-white border border-gray-200 text-center shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-105 animate-slide-up"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                  data-testid={`metric-${index}`}
                 >
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center animate-pulse">
-                    <Brain className="w-7 h-7 text-white" />
+                  <div className="flex items-center justify-center mb-3">
+                    <div className={`w-12 h-12 ${
+                      metric.color === 'text-emerald-500' ? 'bg-emerald-50' :
+                      metric.color === 'text-blue-500' ? 'bg-blue-50' :
+                      metric.color === 'text-purple-500' ? 'bg-purple-50' :
+                      'bg-orange-50'
+                    } rounded-lg flex items-center justify-center`}>
+                      <metric.icon className={`w-6 h-6 ${metric.color}`} />
+                    </div>
                   </div>
-                  <span className="text-sm font-semibold text-purple-400 uppercase tracking-wide">
-                    MULTI-MODAL AI INPUT
-                  </span>
-                </motion.div>
-                <motion.h2 
-                  className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.3, duration: 0.8 }}
-                >
-                  Feed Your <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">AI Marketing Brain</span>
-                </motion.h2>
-                <motion.p 
-                  className="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5, duration: 0.8 }}
-                >
-                  The more you share, the smarter your ads become. Upload any combination of content and watch AI create your perfect Meta Ads strategy.
-                </motion.p>
-              </motion.div>
+                  <div className="text-3xl font-bold text-gray-900 mb-1">{metric.value}</div>
+                  <div className="text-sm text-gray-600">{metric.label}</div>
+                </Card>
+              ))}
+            </div>
 
-              {/* Tabs */}
-              <motion.div 
-                className="flex justify-center mb-8"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7, duration: 0.6 }}
-              >
-                <div className="bg-white/10 backdrop-blur-xl rounded-xl p-2 shadow-2xl border border-white/20">
-                  <div className="flex space-x-2">
-                    {tabs.map((tab, index) => {
+            {/* Quick Start Form */}
+            <div className="max-w-4xl mx-auto mb-16">
+              <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-lg" data-testid="analysis-form">
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-4">Start Your Campaign Analysis</h2>
+                  <p className="text-gray-600">Upload your content and let our AI create optimized campaigns for you</p>
+                </div>
+
+                {/* Tab Selection - Side by Side */}
+                <div className="flex justify-center mb-8">
+                  <div className="inline-flex bg-gray-50 p-1 rounded-lg border border-gray-200">
+                    {tabs.map((tab) => {
                       const Icon = tab.icon;
                       return (
-                        <motion.button
+                        <button
                           key={tab.id}
                           onClick={() => setActiveTab(tab.id)}
-                          className={`flex items-center gap-3 px-6 py-4 rounded-lg transition-all duration-300 font-medium ${
+                          className={`px-6 py-3 rounded-md font-medium transition-all flex items-center space-x-2 ${
                             activeTab === tab.id
-                              ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg'
-                              : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+                              ? 'bg-white text-purple-600 shadow-sm border border-gray-200'
+                              : 'text-gray-600 hover:text-gray-900'
                           }`}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.8 + index * 0.1 }}
+                          data-testid={`tab-${tab.id}`}
                         >
-                          <Icon className="w-5 h-5" />
+                          <Icon className="w-4 h-4" />
                           <span>{tab.label}</span>
-                        </motion.button>
+                        </button>
                       );
                     })}
                   </div>
                 </div>
-              </motion.div>
 
-              {/* Error/Success Messages */}
-              <AnimatePresence>
-                {(error || success) && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="max-w-2xl mx-auto mb-8"
-                  >
-                    <div className={`p-4 rounded-xl flex items-center gap-3 ${
-                      error 
-                        ? 'bg-red-500/10 border border-red-500/20 text-red-400' 
-                        : 'bg-green-500/10 border border-green-500/20 text-green-400'
-                    }`}>
-                      <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                      <span className="text-sm font-medium">{error || success}</span>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Content Area */}
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1, duration: 0.8 }}
-              >
-                <Card className="bg-white/5 backdrop-blur-xl p-10 shadow-2xl border-2 border-dashed border-gray-600 hover:border-purple-500 transition-all duration-500">
+                {/* Content Area */}
+                <div className="space-y-6">
                   <AnimatePresence mode="wait">
                     {activeTab === 'website' && (
                       <motion.div
                         key="website"
-                        className="text-center"
                         initial={{ opacity: 0, x: -50 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 50 }}
                         transition={{ duration: 0.5 }}
                       >
-                        <div className="flex justify-center mb-8">
-                          <motion.div
-                            className="w-24 h-24 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-full flex items-center justify-center backdrop-blur-sm"
-                            animate={{ y: [0, -10, 0] }}
-                            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                          >
-                            <Link className="w-12 h-12 text-purple-400" />
-                          </motion.div>
-                        </div>
-                        <h3 className="text-3xl font-bold text-white mb-4">Website Analysis</h3>
-                        <p className="text-gray-300 mb-10 max-w-2xl mx-auto text-lg leading-relaxed">
-                          Enter your website URL and let AI extract insights about your business, products, and audience.
-                        </p>
-                        <div className="max-w-lg mx-auto">
-                          <Label htmlFor="website-url" className="text-left block mb-3 font-semibold text-gray-200">
+                        <div>
+                          <Label htmlFor="website-url" className="block text-sm font-medium text-gray-700 mb-2">
                             Website URL *
                           </Label>
                           <div className="relative">
                             <Input
                               id="website-url"
                               type="url"
-                              placeholder="https://your-website.com"
+                              placeholder="https://example.com"
                               value={websiteUrl}
-                              onChange={(e) => {
-                                setWebsiteUrl(e.target.value);
-                                setError(''); // Clear error when user types
-                              }}
-                              className={`w-full px-6 py-4 bg-gray-800/50 border rounded-xl text-lg text-white placeholder-gray-400 focus:ring-2 transition-all duration-300 backdrop-blur-sm ${
-                                error && !websiteUrl
-                                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
-                                  : 'border-gray-600 focus:border-purple-500 focus:ring-purple-500/20'
+                              onChange={handleUrlChange}
+                              className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 pr-10 ${
+                                urlError ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-purple-500'
                               }`}
-                              disabled={isAnalyzing}
+                              data-testid="input-website-url"
+                              required
                             />
-                            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-purple-500/0 rounded-xl opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                              <Link className="w-5 h-5 text-gray-400" />
+                            </div>
                           </div>
-                          <p className="text-xs text-gray-400 mt-2 text-left">
-                            * Required field - Must be a valid URL starting with http:// or https://
-                          </p>
+                          {urlError && (
+                            <p className="mt-2 text-sm text-red-600" data-testid="url-error">
+                              {urlError}
+                            </p>
+                          )}
                         </div>
                       </motion.div>
                     )}
@@ -555,167 +1096,116 @@ export const HeroSection = () => {
                     {activeTab === 'images' && (
                       <motion.div
                         key="images"
-                        className="text-center"
                         initial={{ opacity: 0, x: -50 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 50 }}
                         transition={{ duration: 0.5 }}
+                        className="space-y-6"
                       >
-                        <div className="flex justify-center mb-8">
-                          <motion.div
-                            className="w-24 h-24 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full flex items-center justify-center backdrop-blur-sm"
-                            animate={{ y: [0, -10, 0] }}
-                            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                          >
-                            <Camera className="w-12 h-12 text-blue-400" />
-                          </motion.div>
+                        <div>
+                          <Label htmlFor="image-title" className="block text-sm font-medium text-gray-700 mb-2">
+                            Image Title
+                          </Label>
+                          <Input
+                            id="image-title"
+                            placeholder="Enter a title for the image"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                            data-testid="input-image-title"
+                          />
                         </div>
-                        <h3 className="text-3xl font-bold text-white mb-4">Image Upload</h3>
-                        <p className="text-gray-300 mb-10 max-w-2xl mx-auto text-lg leading-relaxed">
-                          Upload product images, logos, or marketing materials for AI analysis.
-                        </p>
-
-                        <div className="max-w-xl mx-auto space-y-6">
-                          <div>
-                            <Label htmlFor="image-title" className="block mb-2 text-gray-200 font-semibold text-left">
-                              Image Title
-                            </Label>
-                            <Input
-                              id="image-title"
-                              placeholder="Enter a title for the image"
-                              className="w-full px-6 py-4 bg-gray-800/50 border border-gray-600 rounded-xl text-lg text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 backdrop-blur-sm"
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="product-price" className="block mb-2 text-gray-200 font-semibold text-left">
-                              Product Price
-                            </Label>
-                            <Input
-                              id="product-price"
-                              placeholder="Enter a Product Price $10"
-                              className="w-full px-6 py-4 bg-gray-800/50 border border-gray-600 rounded-xl text-lg text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 backdrop-blur-sm"
-                            />
-                          </div>
-
-                          <div>
-                            <Label htmlFor="image-description" className="block mb-2 text-gray-200 font-semibold text-left">
-                              Image Description
-                            </Label>
-                            <textarea
-                              id="image-description"
-                              rows={4}
-                              placeholder="Enter a short description for the image"
-                              className="w-full p-4 bg-gray-800/50 border border-gray-600 rounded-xl resize-none text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 backdrop-blur-sm text-lg"
-                            />
-                          </div>
-
-                          <motion.div
-                            className="border-2 border-dashed border-gray-600 rounded-xl p-12 cursor-pointer group hover:border-purple-500 transition-colors duration-300"
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                          >
-                            <div className="text-center">
-                              <motion.div
-                                animate={{ y: [0, -5, 0] }}
-                                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                              >
-                                <Upload className="w-12 h-12 text-gray-400 mx-auto mb-6 group-hover:text-purple-400 transition-colors duration-300" />
-                              </motion.div>
-                              <p className="text-gray-300 mb-4 text-lg">Drag and drop images here, or click to browse</p>
-                              <Button className="bg-gradient-to-r from-purple-500 to-blue-500 px-6 py-3 rounded-lg text-white font-semibold hover:from-purple-600 hover:to-blue-600 transition-all">
-                                Choose Files
-                              </Button>
-                            </div>
-                          </motion.div>
+                        <div>
+                          <Label htmlFor="product-price" className="block text-sm font-medium text-gray-700 mb-2">
+                            Product Price
+                          </Label>
+                          <Input
+                            id="product-price"
+                            placeholder="Enter a Product Price $10"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                            data-testid="input-product-price"
+                          />
                         </div>
+
+                        <div>
+                          <Label htmlFor="image-description" className="block text-sm font-medium text-gray-700 mb-2">
+                            Image Description
+                          </Label>
+                          <textarea
+                            id="image-description"
+                            rows={4}
+                            placeholder="Enter a short description for the image"
+                            className="w-full p-4 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                            data-testid="textarea-image-description"
+                          />
+                        </div>
+
+                        <motion.div
+                          className="border-2 border-dashed border-gray-300 rounded-xl p-12 cursor-pointer group hover:border-purple-500 transition-colors duration-300"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          data-testid="upload-area"
+                        >
+                          <div className="text-center">
+                            <motion.div
+                              animate={{ y: [0, -5, 0] }}
+                              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                            >
+                              <Upload className="w-12 h-12 text-gray-400 mx-auto mb-6 group-hover:text-purple-400 transition-colors duration-300" />
+                            </motion.div>
+                            <p className="text-gray-600 mb-4 text-lg">Drag and drop images here, or click to browse</p>
+                            <Button 
+                              className="bg-gradient-to-r from-purple-500 to-blue-500 px-6 py-3 rounded-lg text-white font-semibold hover:from-purple-600 hover:to-blue-600 transition-all" 
+                              data-testid="button-choose-files"
+                            >
+                              Choose Files
+                            </Button>
+                          </div>
+                        </motion.div>
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </Card>
-              </motion.div>
 
-              {/* Action Button */}
-              <motion.div 
-                className="flex justify-center mt-8"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.2, duration: 0.6 }}
-              >
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button 
-                    size="lg" 
-                    className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white text-lg px-10 py-5 rounded-xl font-bold transition-all duration-300 shadow-xl min-w-[250px] disabled:opacity-50 disabled:cursor-not-allowed"
+                  <button
                     onClick={handleAnalyze}
-                    disabled={isAnalyzing}
+                    disabled={activeTab === 'website' && (!websiteUrl.trim() || !!urlError)}
+                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-4 px-8 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all transform hover:scale-[1.02] flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    data-testid="button-analyze"
                   >
-                    {isAnalyzing ? (
-                      <span className="flex items-center justify-center gap-3">
-                        <motion.div
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                        >
-                          <Sparkles className="w-5 h-5" />
-                        </motion.div>
-                        <span>Analyzing...</span>
-                      </span>
-                    ) : (
-                      <span className="flex items-center justify-center gap-3">
-                        <Sparkles className="w-5 h-5" />
-                        <span>Analyze & Generate Ads</span>
-                      </span>
-                    )}
-                  </Button>
-                </motion.div>
-              </motion.div>
-            </div>
-            
-            {/* Performance Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-16">
-              {performanceMetrics.map((metric, index) => (
-                <Card 
-                  key={index} 
-                  className={`p-6 glass-effect border-white/10 text-center bg-white/10 transition-all duration-300 transform hover:scale-105 animate-slide-up`}
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <metric.icon className={`w-8 h-8 mx-auto mb-3 ${metric.color}`} />
-                  <div className="text-3xl font-bold text-white mb-1">{metric.value}</div>
-                  <div className="text-white/70 text-sm">{metric.label}</div>
-                </Card>
-              ))}
+                    <Sparkles className="w-5 h-5" />
+                    <span>Analyze with AI</span>
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Workflow Section */}
-      <section className="py-20 bg-slate-950/50 backdrop-blur-sm">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">
-              How It Works
-            </h2>
-            <p className="text-xl text-white/70 max-w-3xl mx-auto">
-              Our AI-powered platform streamlines your entire advertising workflow in just 4 simple steps
+      {/* How It Works */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              From upload to launch in just a few minutes
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {workflowSteps.map((step, index) => (
               <div key={index} className="relative">
                 <Card 
-                  className={`p-8 text-center glass-effect border-white/10 bg-white/5 transition-all duration-500 transform hover:scale-105 animate-slide-up`}
-                  style={{ animationDelay: step.delay }}
+                  className="p-8 text-center bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-500 transform hover:scale-105"
+                  data-testid={`workflow-step-${index}`}
                 >
-                  <div className={`w-16 h-16 bg-gradient-to-r ${step.color} rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg`}>
+                  <div className={`w-16 h-16 bg-gradient-to-r ${step.color} rounded-2xl flex items-center justify-center mx-auto mb-6`}>
                     <step.icon className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-3">{step.title}</h3>
-                  <p className="text-white/70">{step.description}</p>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">{step.title}</h3>
+                  <p className="text-gray-600">{step.description}</p>
                 </Card>
                 {index < workflowSteps.length - 1 && (
-                  <div className="hidden md:block absolute top-1/2 -right-8 transform -translate-y-1/2">
-                    <ArrowRight className="w-8 h-8 text-white/30" />
-                  </div>
+                  <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gray-200"></div>
                 )}
               </div>
             ))}
@@ -723,68 +1213,75 @@ export const HeroSection = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 bg-gradient-to-r from-slate-900 to-purple-900">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">
-              Why Choose <span className="brand-font">TEadifyz.AI</span>?
-            </h2>
-            <p className="text-xl text-white/70 max-w-3xl mx-auto">
-              Experience the future of digital advertising with our cutting-edge AI technology
+      {/* Features Grid */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Powerful Features</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Everything you need to create and manage successful campaigns
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <Card 
-                key={index} 
-                className="p-6 text-center glass-effect border-white/10 bg-white/5 transition-all duration-300 transform hover:scale-105 animate-fade-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <feature.icon className={`w-12 h-12 mx-auto mb-4 ${feature.color}`} />
-                <h3 className="text-lg font-bold text-white mb-2">{feature.title}</h3>
-                <p className="text-white/70 text-sm">{feature.description}</p>
+              <Card key={index} className="p-8 bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all" data-testid={`feature-${index}`}>
+                <div className={`w-12 h-12 ${
+                  feature.color === 'text-blue-500' ? 'bg-blue-50' :
+                  feature.color === 'text-purple-500' ? 'bg-purple-50' :
+                  feature.color === 'text-green-500' ? 'bg-green-50' :
+                  'bg-orange-50'
+                } rounded-lg flex items-center justify-center mb-6`}>
+                  <feature.icon className={`w-6 h-6 ${feature.color}`} />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">{feature.title}</h3>
+                <p className="text-gray-600">{feature.description}</p>
               </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Social Proof Section */}
-      <section className="py-20 bg-slate-950/80 backdrop-blur-sm">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">
-              Trusted by Industry Leaders
-            </h2>
-            <p className="text-xl text-white/70 max-w-3xl mx-auto">
-              Join thousands of businesses that have transformed their advertising with our platform
+      {/* Testimonials */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">What Our Users Say</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Join thousands of businesses already succeeding with TEadifyz.AI
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <Card 
-                key={index} 
-                className="p-8 text-center glass-effect border-white/10 bg-white/5 transition-all duration-300 transform hover:scale-105 animate-slide-up"
-                style={{ animationDelay: `${index * 0.2}s` }}
-              >
-                <div className="flex items-center justify-center mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-                  ))}
-                </div>
-                <p className="text-white/80 mb-6 italic">
-                  "{testimonial.quote}"
-                </p>
-                <div className="flex items-center justify-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white font-bold">
-                    {testimonial.avatar}
+              <Card key={index} className="p-8 bg-white border border-gray-200 shadow-sm" data-testid={`testimonial-${index}`}>
+                <div className="flex items-center mb-4">
+                  <div className="flex text-yellow-400">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-5 h-5 fill-current" />
+                    ))}
                   </div>
-                  <div className="text-left">
-                    <div className="font-semibold text-white">{testimonial.author}</div>
-                    <div className="text-sm text-white/60">{testimonial.role}</div>
+                </div>
+                <blockquote className="text-gray-700 mb-6 italic">
+                  "{testimonial.quote}"
+                </blockquote>
+                <div className="flex items-center">
+                  <div className={`w-12 h-12 ${
+                    index === 0 ? 'bg-purple-100' : 
+                    index === 1 ? 'bg-blue-100' : 
+                    'bg-green-100'
+                  } rounded-full flex items-center justify-center mr-4`}>
+                    <span className={`${
+                      index === 0 ? 'text-purple-600' : 
+                      index === 1 ? 'text-blue-600' : 
+                      'text-green-600'
+                    } font-semibold`}>
+                      {testimonial.avatar}
+                    </span>
+                  </div>
+                  <div>
+                    <div className="font-semibold text-gray-900">{testimonial.author}</div>
+                    <div className="text-gray-600 text-sm">{testimonial.role}</div>
                   </div>
                 </div>
               </Card>
@@ -794,40 +1291,75 @@ export const HeroSection = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 cta-section bg-gradient-to-r from-purple-600 via-blue-600 to-purple-700 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold text-white mb-6 animate-slide-up">
-            Ready to Transform Your Advertising?
-          </h2>
-          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto animate-slide-up stagger-1">
-            Join thousands of businesses that have already revolutionized their digital marketing with our AI-powered platform.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up stagger-2">
-            <Button 
-              size="lg" 
-              className="text-lg px-8 py-4 bg-white text-purple-600 hover:bg-gray-100 btn-ripple group font-semibold rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-white/25 hover:scale-105" 
-              onClick={() => navigate('/product-insights')}
-            >
-              Start Free Trial
-              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            <Button 
-              size="lg" 
-              className="text-lg px-8 py-4 bg-transparent border-2 border-white text-white font-semibold hover:bg-white hover:text-purple-600 transition-all duration-300 rounded-lg hover:shadow-lg hover:shadow-white/25"
-              onClick={() => navigate('/product-insights')}
-            >
-              <Shield className="mr-2 w-5 h-5" />
-              Schedule Demo
-            </Button>
-          </div>
-          <div className="mt-6 flex items-center justify-center gap-2 text-white/70 animate-slide-up stagger-2">
-            <CheckCircle className="w-5 h-5" />
-            <span>No credit card required • 14-day free trial</span>
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center">
+            <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-3xl p-12 text-white" data-testid="cta-section">
+              <h2 className="text-4xl font-bold mb-4">Ready to Transform Your Ads?</h2>
+              <p className="text-xl text-purple-100 mb-8 max-w-2xl mx-auto">
+                Join thousands of businesses already using AI to create better campaigns
+              </p>
+              <Button 
+                onClick={() => setLocation('/product-insights')}
+                className="bg-white text-purple-600 hover:bg-gray-50 px-8 py-4 rounded-lg font-semibold transition-colors transform hover:scale-105 inline-flex items-center space-x-2"
+                data-testid="button-start-trial"
+              >
+                <span>Start Free Trial</span>
+                <ArrowRight className="w-5 h-5" />
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
+      {/* Footer */}
+      <footer className="bg-gray-50 border-t border-gray-200 py-12">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center space-x-2 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+                  <Zap className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-xl font-bold text-gray-900">TEadifyz.AI</span>
+              </div>
+              <p className="text-gray-600 mb-4">AI-powered campaign creation for modern businesses.</p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-4">Product</h3>
+              <ul className="space-y-2 text-gray-600">
+                <li><a href="#" className="hover:text-purple-600 transition-colors">Features</a></li>
+                <li><a href="#" className="hover:text-purple-600 transition-colors">Pricing</a></li>
+                <li><a href="#" className="hover:text-purple-600 transition-colors">API</a></li>
+                <li><a href="#" className="hover:text-purple-600 transition-colors">Integrations</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-4">Company</h3>
+              <ul className="space-y-2 text-gray-600">
+                <li><a href="#" className="hover:text-purple-600 transition-colors">About</a></li>
+                <li><a href="#" className="hover:text-purple-600 transition-colors">Blog</a></li>
+                <li><a href="#" className="hover:text-purple-600 transition-colors">Careers</a></li>
+                <li><a href="#" className="hover:text-purple-600 transition-colors">Contact</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-4">Support</h3>
+              <ul className="space-y-2 text-gray-600">
+                <li><a href="#" className="hover:text-purple-600 transition-colors">Help Center</a></li>
+                <li><a href="#" className="hover:text-purple-600 transition-colors">Documentation</a></li>
+                <li><a href="#" className="hover:text-purple-600 transition-colors">Status</a></li>
+                <li><a href="#" className="hover:text-purple-600 transition-colors">Privacy</a></li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-gray-200 mt-8 pt-8 text-center text-gray-600">
+            <p>&copy; 2024 TEadifyz.AI. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
+
+

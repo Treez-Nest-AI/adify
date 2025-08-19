@@ -90,6 +90,34 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
+  /* global.css */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 8px; /* Rounded-md track */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #2563eb;
+  border-radius: 8px; /* Rounded-md thumb */
+  border: 2px solid #f1f1f1; /* Gap so it looks rounded at both ends */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #1d4ed8;
+}
+
+/* Firefox support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2563eb #f1f1f1;
+}
+
+
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;

@@ -4,7 +4,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import CampaignConfig from "@/pages/Campaign"
+import CampaignCard from "@/pages/campaignStudio"
 import Index from "./pages/Index";
+import PricingPlan from "./pages/PricingPlan"
 import NotFound from "./pages/NotFound";
 import PaymentPlans from "./pages/PaymentPlans";
 import PaymentDetails from "./pages/PaymentDetails";
@@ -17,6 +20,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import ProductInsightsPage from "./pages/ProductInsightsPage";
 import ProductAnalysisPage from "./pages/ProductAnalysisPage";
+import ProductDescriptionPage from "./pages/ProductDescriptionPage";
 import { CampaignSetup } from "@/components/CampaignSetup";
 import { Navigation } from "@/components/Navigation";
 import { AdPreviewGenerator } from "./components/AdPreviewGenerator";
@@ -45,12 +49,16 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/sign-in" element={<SignIn />} />
+            <Route path="/product-description" element={<ProductDescriptionPage/>} />
+            <Route path="/pricing-plan" element={<PricingPlan/>} />
+            <Route path="/Campaign" element={<CampaignConfig/>} />
+            <Route path="/CampaignCard" element={<CampaignCard/>} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/payment-plans" element={<PaymentPlans />} />
             <Route path="/payment-details" element={<PaymentDetails />} />
             <Route path="/product-insights" element={<ProductInsightsPage />} />
             <Route path="/product-analysis" element={<ProductAnalysisPage />} />
-            <Route path="/campaign-setup" element={<CampaignSetupPage />} />
+            {/* <Route path="/campaign-setup" element={<CampaignSetupPage />} /> */}
             <Route path="/ad-preview" element={<AdPreviewGenerator />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

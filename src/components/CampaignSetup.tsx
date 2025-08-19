@@ -60,6 +60,7 @@ export const CampaignSetup = ({ onBack, onGenerate }: CampaignSetupProps) => {
   const handleBack = () => {
     if (onBack) {
       onBack();
+      navigate('/product-description')
     } else {
       window.history.back();
     }

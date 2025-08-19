@@ -1,724 +1,1512 @@
 
 
-import { useState } from "react";
+
+
+
+
+
+
+
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { Check, ChevronLeft } from 'lucide-react';
-import {ProductInsights} from "@/components/ProductInsights"
-import { useNavigate } from "react-router-dom";
+import logo from "@/assets/logoo.png"
 import { 
   Brain, 
-  Globe, 
-  Camera, 
-  FileText, 
-  Type, 
   Sparkles, 
-  Plus,
-  Link,
-  Upload,
-  AlertCircle
-} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-
-
-type InputTab = 'website' | 'images';
-
-interface ApiResponse {
-  product_title : string;
-  price_range: string;
-  brand_analysis: string;
-  product_analysis: string;
-  target_audience: string[];
-  key_selling_points: string[];
-  product_description: string;
-}
+  Globe,
+  Tag,
+  Users,
+  Lightbulb,
+  ChevronLeft,
+  Star,
+  Box,
+  Rocket,
+  RotateCcw,
+  DollarSign,
+  Target,
+  TrendingUp,
+  Eye,
+  ShoppingCart,
+  MessageSquare
+} from 'lucide-react';
+import { motion } from "framer-motion";
+import axios from "axios";
 
 const ProductInsightsPage = () => {
-   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<InputTab>('website');
-  const [websiteUrl, setWebsiteUrl] = useState('');
-  const [description, setDescription] = useState('');
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [showInsights, setShowInsights] = useState(false);
-  const [apiResponse, setApiResponse] = useState<ApiResponse | null>(null);
-  const [websiteData, setWebsiteData] = useState<any>(null);
+  const navigate = useNavigate();
+  const [currentScreen, setCurrentScreen] = useState<'loading' | 'analysis' | 'results'>('loading');
+  const [progress, setProgress] = useState(0);
+  const [progressText, setProgressText] = useState('Initializing analysis...');
+  const [currentStep, setCurrentStep] = useState(0);
+  const [typingTexts, setTypingTexts] = useState(['', '', '', '']);
+  const [analysisData, setAnalysisData] = useState(null);
+  const [error, setError] = useState(null);
 
-  // URL validation function
-  const isValidUrl = (url: string): boolean => {
-    try {
-      const urlPattern = /^https?:\/\/.+\..+/;
-      return urlPattern.test(url) && url.length > 0;
-    } catch {
-      return false;
+  const steps = [
+    {
+      icon: Globe,
+      iconColor: 'text-blue-600',
+      bgColor: 'bg-blue-50',
+      title: 'Analyzing Website Content',
+      text: 'Scanning website structure and extracting product information from your provided URL...'
+    },
+    {
+      icon: Tag,
+      iconColor: 'text-purple-600',
+      bgColor: 'bg-purple-50',
+      title: 'Extracting Product Details',
+      text: 'Analyzing product features, pricing, specifications, and brand positioning...'
+    },
+    {
+      icon: Users,
+      iconColor: 'text-green-600',
+      bgColor: 'bg-green-50',
+      title: 'Identifying Target Audience',
+      text: 'Identifying target demographics, customer personas, and market segments...'
+    },
+    {
+      icon: Lightbulb,
+      iconColor: 'text-orange-600',
+      bgColor: 'bg-orange-50',
+      title: 'Generating Marketing Insights',
+      text: 'Generating comprehensive marketing insights and campaign recommendations...'
     }
+  ];
+
+  const typeText = (text: string, stepIndex: number, speed = 30): Promise<void> => {
+    return new Promise(resolve => {
+      let i = 0;
+      const interval = setInterval(() => {
+        if (i <= text.length) {
+          setTypingTexts(prev => {
+            const newTexts = [...prev];
+            newTexts[stepIndex] = text.slice(0, i);
+            return newTexts;
+          });
+          i++;
+        } else {
+          clearInterval(interval);
+          resolve();
+        }
+      }, speed);
+    });
   };
 
-  // API call function
-  const sendUrlToAPI = async (url: string) => {
+  useEffect(() => {
+    // Check if we have stored analysis data
+    const storedData = sessionStorage.getItem('productAnalysis');
+    
+    if (storedData) {
+      try {
+        const parsedData = JSON.parse(storedData);
+        
+        // If we already have analysis data, skip API call
+        if (parsedData.analysisData) {
+          setAnalysisData(parsedData.analysisData);
+          runAnalysisAnimation();
+        } else {
+          // Make API call with the stored request data
+          makeApiCall(parsedData);
+        }
+      } catch (err) {
+        console.error('Error parsing stored data:', err);
+        setError('Invalid analysis data. Please try again.');
+        setTimeout(() => navigate('/'), 3000);
+      }
+    } else {
+      setError('No analysis data found. Please start from the home page.');
+      setTimeout(() => navigate('/'), 3000);
+    }
+  }, [navigate]);
+
+  const makeApiCall = async (storedData) => {
     try {
-      const response = await fetch(
-        'https://shashankdoom.app.n8n.cloud/webhook-test/start-campaign-setup',
+      // Start the analysis animation first
+      runAnalysisAnimation();
+      
+      console.log('Making API call with data:', storedData.requestData);
+      
+      // Call the API
+      const response = await axios.post(
+        'https://base234.app.n8n.cloud/webhook/d664dc96-6d9d-419b-aee8-c1cf23dd8fb2/nest-ai/projectbrief',
+        storedData.requestData,
         {
-          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ url: url }),
+          timeout: 60000 // 60 second timeout
         }
       );
-
-      if (!response.ok) {
-        throw new Error(`API Error: ${response.status} - ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      if (error instanceof TypeError) {
-        throw new Error('Network error: Unable to reach the server');
-      }
-      throw error;
-    }
-  };
-
-  // const handleAnalyze = async () => {
-  //   // Clear previous messages
-  //   setError('');
-  //   setSuccess('');
-
-  //   // Validation
-  //   if (!websiteUrl.trim()) {
-  //     setError('Please enter a website URL');
-  //     return;
-  //   }
-
-  //   if (!isValidUrl(websiteUrl)) {
-  //     setError('Please enter a valid URL (must start with http:// or https://)');
-  //     return;
-  //   }
-
-  //   setIsAnalyzing(true);
-
-  //   try {
-  //     const result = await sendUrlToAPI(websiteUrl);
-      
-  //     // Debug: Log the actual response to console
-  //     console.log('API Response:', result);
-  //     console.log('Response Type:', typeof result);
-  //     console.log('Is Array:', Array.isArray(result));
-      
-  //     setSuccess('Analysis complete! Generating insights...');
-      
-  //     let content = null;
-      
-  //     // Try different possible response structures
-  //     if (result && Array.isArray(result) && result.length > 0) {
-  //       // Case 1: Array format like your example
-  //       if (result[0].message && result[0].message.content) {
-  //         content = result[0].message.content;
-  //         console.log('Found content in array format:', content);
-  //       }
-  //     } else if (result && result.message && result.message.content) {
-  //       // Case 2: Single object with message.content
-  //       content = result.message.content;
-  //       console.log('Found content in single object format:', content);
-  //     } else if (result && result.content) {
-  //       // Case 3: Direct content property
-  //       content = result.content;
-  //       console.log('Found content in direct format:', content);
-  //     } else if (result && typeof result === 'object') {
-  //       // Case 4: Direct object (the content itself)
-  //       if (result.price_range || result.brand_analysis || result.product_analysis) {
-  //         content = result;
-  //         console.log('Found content as direct object:', content);
-  //       }
-  //     }
-      
-  //     if (content && typeof content === 'object') {
-  //       setApiResponse(content);
+  
+      // DEBUG: Log the entire response to see what we're getting
+      console.log('Full API response:', response);
+      console.log('Response data:', response.data);
+      console.log('Response data type:', typeof response.data);
+      console.log('Response data length:', response.data?.length);
+  
+      // Check if response.data exists and has content
+      if (response.data) {
+        console.log('Response data structure:', JSON.stringify(response.data, null, 2));
         
-  //       // Create website data object with URL info
-  //       setWebsiteData({
-  //         url: websiteUrl,
-  //         title: extractDomainName(websiteUrl),
-  //         description: content.product_description || 'Product analyzed from website',
-  //         brand: extractBrandFromUrl(websiteUrl) || 'Brand',
-  //         price: content.price_range || 'Price not specified',
-  //         details: content.product_analysis || 'Product details from analysis',
-  //         image: '/api/placeholder/400/300' // Default placeholder
-  //       });
+        // Try different possible response structures
+        let analysisData = null;
+        
+        // Option 1: Check if response.data is directly the analysis data (object)
+        if (typeof response.data === 'object' && !Array.isArray(response.data) && response.data.product_name) {
+          console.log('Found analysis data directly in response.data');
+          analysisData = response.data;
+        }
+        // Option 2: Check if response.data is an array with analysis data
+        else if (Array.isArray(response.data) && response.data.length > 0) {
+          console.log('Response is array, checking first element...');
+          
+          // Check if first element has message.content structure
+          if (response.data[0]?.message?.content) {
+            console.log('Found analysis data in response.data[0].message.content');
+            analysisData = response.data[0].message.content;
+          }
+          // Check if first element is directly the analysis data
+          else if (response.data[0]?.product_name) {
+            console.log('Found analysis data directly in response.data[0]');
+            analysisData = response.data[0];
+          }
+          // Check if the array contains the analysis data directly
+          else {
+            console.log('Checking if array contains analysis data directly');
+            analysisData = response.data[0];
+          }
+        }
+        // Option 3: Check if response.data has a nested structure
+        else if (response.data.content || response.data.analysis || response.data.result) {
+          console.log('Found analysis data in nested structure');
+          analysisData = response.data.content || response.data.analysis || response.data.result;
+        }
+        
+        console.log('Final analysisData:', analysisData);
+        console.log('AnalysisData type:', typeof analysisData);
+        
+        if (analysisData) {
+          // If analysisData is a string, try to parse it as JSON
+          if (typeof analysisData === 'string') {
+            try {
+              analysisData = JSON.parse(analysisData);
+              console.log('Successfully parsed string response as JSON');
+            } catch (parseError) {
+              console.error('Failed to parse response as JSON:', parseError);
+              throw new Error('Invalid JSON response format');
+            }
+          }
+          
+          // Update stored data with the analysis results
+          const updatedStorageData = {
+            ...storedData,
+            analysisData,
+            timestamp: new Date().toISOString()
+          };
+          
+          sessionStorage.setItem('productAnalysis', JSON.stringify(updatedStorageData));
+          setAnalysisData(analysisData);
+        } else {
+          console.error('No valid analysis data found in response');
+          console.error('Available response keys:', Object.keys(response.data || {}));
+          throw new Error('No analysis data found in API response');
+        }
+      } else {
+        console.error('No response data received');
+        throw new Error('Empty response from API');
+      }
+    } catch (error) {
+      console.error('API call failed:', error);
+      
+      // Log more details about the error
+      if (error.response) {
+        console.error('Error response status:', error.response.status);
+        console.error('Error response data:', error.response.data);
+        console.error('Error response headers:', error.response.headers);
+      } else if (error.request) {
+        console.error('Error request:', error.request);
+      } else {
+        console.error('Error message:', error.message);
+      }
+      
+      // Show user-friendly error message
+      let errorMessage = 'Analysis failed. Please try again.';
+      if (error.code === 'ECONNABORTED') {
+        errorMessage = 'Request timed out. Please try again.';
+      } else if (error.response?.status === 400) {
+        errorMessage = 'Invalid website URL. Please check and try again.';
+      } else if (error.response?.status >= 500) {
+        errorMessage = 'Server error. Please try again later.';
+      }
+      
+      setError(errorMessage);
+      setTimeout(() => navigate('/'), 3000);
+    }
+  };
 
-  //       // Show insights after a brief delay
-  //       setTimeout(() => {
-  //         setShowInsights(true);
-  //       }, 1500);
-  //     } else {
-  //       console.error('Could not extract content from response:', result);
-  //       throw new Error(`Invalid response format from API. Received: ${JSON.stringify(result)}`);
-  //     }
-
-  //   } catch (error) {
-  //     setError(error instanceof Error ? error.message : 'Failed to analyze website');
-  //   } finally {
-  //     setIsAnalyzing(false);
-  //   }
-  // };
-const fetchScreenshot = async (url: string) => {
-  try {
-    console.log('🖼️ Attempting to capture screenshot for URL:', url);
+  const runAnalysisAnimation = async () => {
+    // Initial loading phase
+    setProgressText('Initializing AI analysis engine...');
+    setProgress(15);
     
-    const response = await fetch('http://localhost:5000/api/v1/screenshot', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ url }),
-    });
-
-    console.log('🖼️ Screenshot API response status:', response.status);
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('🖼️ Screenshot API error response:', errorText);
-      throw new Error(`Screenshot API Error: ${response.status} - ${errorText}`);
-    }
-
-    const data = await response.json();
-    console.log('🖼️ Screenshot API response data:', data);
+    await new Promise(resolve => setTimeout(resolve, 600));
+    setProgressText('Connecting to product analysis systems...');
+    setProgress(40);
     
-    // Construct full URL for the screenshot
-    if (data?.data?.screenshot_url) {
-      const fullUrl = `http://localhost:5000${data.data.screenshot_url}`;
-      console.log('🖼️ Full screenshot URL:', fullUrl);
-      return fullUrl;
+    await new Promise(resolve => setTimeout(resolve, 700));
+    setProgressText('Preparing advanced algorithms...');
+    setProgress(70);
+    
+    await new Promise(resolve => setTimeout(resolve, 500));
+    setProgressText('Starting analysis...');
+    setProgress(100);
+    
+    await new Promise(resolve => setTimeout(resolve, 200));
+    
+    // Transition to analysis screen
+    setCurrentScreen('analysis');
+    
+    // Start analysis steps
+    await runAnalysisSteps();
+  };
+
+  const runAnalysisSteps = async () => {
+    for (let i = 0; i < steps.length; i++) {
+      setCurrentStep(i);
+      await typeText(steps[i].text, i);
+      await new Promise(resolve => setTimeout(resolve, 1800));
     }
     
-    console.log('🖼️ No screenshot URL in response');
-    return null;
-  } catch (error) {
-    console.error('🖼️ Screenshot API Error:', error);
-    return null;
-  }
-};
-
-
-
-
-
-// important
-
-// const handleAnalyze = async () => {
-//   setError('');
-//   setSuccess('');
-
-//   if (!websiteUrl.trim()) {
-//     setError('Please enter a website URL');
-//     return;
-//   }
-
-//   if (!isValidUrl(websiteUrl)) {
-//     setError('Please enter a valid URL (must start with http:// or https://)');
-//     return;
-//   }
-
-//   setIsAnalyzing(true);
-
-//   try {
-//     // Call AI analysis API
-//     const result = await sendUrlToAPI(websiteUrl);
-//     console.log('🔍 AI Analysis API Response:', result);
-
-//     let content = null;
-
-//     if (result && Array.isArray(result) && result.length > 0) {
-//       if (result[0].message?.content) {
-//         content = result[0].message.content;
-//       }
-//     } else if (result?.message?.content) {
-//       content = result.message.content;
-//     } else if (result?.content) {
-//       content = result.content;
-//     } else if (typeof result === 'object') {
-//       content = result;
-//     }
-
-//     if (!content || typeof content !== 'object') {
-//       throw new Error('Invalid response format from AI analysis API');
-//     }
-
-//     // Call screenshot API
-//     const screenshotUrl = await fetchScreenshot(websiteUrl);
-//     console.log('🖼️ Screenshot API Response:', screenshotUrl);
-
-//     // Set insights and websiteData
-//     setApiResponse(content);
-//     setWebsiteData({
-//       url: websiteUrl,
-//       title: extractDomainName(websiteUrl),
-//       description: content.product_description || 'Product analyzed from website',
-//       brand: extractBrandFromUrl(websiteUrl) || 'Brand',
-//       price: content.price|| 'Price not specified',
-//       details: content.product_analysis || 'Product details from analysis',
-//       image: screenshotUrl || '/api/placeholder/400/300',
-//     });
-
-//     setSuccess('Analysis complete! Generating insights...');
-//     setTimeout(() => {
-//       setShowInsights(true);
-//     }, 1500);
-
-//   } catch (error) {
-//     setError(error instanceof Error ? error.message : 'Failed to analyze website');
-//     console.error('❌ Error:', error);
-//   } finally {
-//     setIsAnalyzing(false);
-//   }
-// };
-
-
-const handleAnalyze = async () => {
-  const fakeData = {
-    product_description: 'This is a dummy product description for development.',
-    price: '$49',
-    product_analysis: 'This product is innovative and useful.',
-    product_title: 'Dummy Product',
-    price_range: '$40 - $60',
-    brand_analysis: 'Dummy Brand is well-known for quality products.',
-    target_audience: ['Tech enthusiasts', 'Early adopters'], // ✅ fix here
-    key_selling_points: ['Affordable', 'High quality', 'Great design'],
+    // Transition to results
+    await new Promise(resolve => setTimeout(resolve, 800));
+    setCurrentScreen('results');
   };
 
-  setApiResponse(fakeData);
+  const handleGoBack = () => {
+    sessionStorage.removeItem('productAnalysis');
+    navigate('/');
+  };
 
-  setWebsiteData({
-    url: websiteUrl || 'https://example.com',
-    title: extractDomainName(websiteUrl || 'https://example.com'),
-    description: fakeData.product_description,
-    brand: extractBrandFromUrl(websiteUrl || 'https://example.com'),
-    price: fakeData.price,
-    details: fakeData.product_analysis,
-    image: '/api/placeholder/400/300',
-  });
+  const handleCreateCampaign = () => {
+    navigate('/pricing-plan');
+  };
 
-  setShowInsights(true);
-};
-
-
-
-
-
-
-  // Helper function to extract domain name
-  const extractDomainName = (url: string): string => {
-    try {
-      const domain = new URL(url).hostname;
-      return domain.replace('www.', '').split('.')[0];
-    } catch {
-      return 'Website Product';
+  const handleRegenerate = async () => {
+    const storedData = sessionStorage.getItem('productAnalysis');
+    if (storedData) {
+      const parsedData = JSON.parse(storedData);
+      
+      try {
+        // Show loading state
+        setCurrentScreen('loading');
+        setProgress(0);
+        setCurrentStep(0);
+        setTypingTexts(['', '', '', '']);
+        setProgressText('Regenerating analysis...');
+        
+        // Call the SAME API endpoint as in HeroSection
+        const response = await axios.post(
+          'https://spideyxxx.app.n8n.cloud/webhook/d664dc96-6d9d-419b-aee8-c1cf23dd8fb2/nest-ai/projectbrief',
+          {
+            url: parsedData.originalUrl,
+            // Include description if it was provided originally
+            ...(parsedData.originalDescription && { description: parsedData.originalDescription })
+          },
+          {
+            headers: { 'Content-Type': 'application/json' },
+            timeout: 60000
+          }
+        );
+  
+        if (response.data && response.data.length > 0) {
+          const newAnalysisData = response.data[0]?.message?.content;
+          if (newAnalysisData) {
+            // Update stored data with new analysis
+            const updatedStoredData = {
+              ...parsedData,
+              analysisData: newAnalysisData,
+              timestamp: new Date().toISOString()
+            };
+            sessionStorage.setItem('productAnalysis', JSON.stringify(updatedStoredData));
+            setAnalysisData(newAnalysisData);
+            
+            // Start the analysis animation again
+            runAnalysisAnimation();
+          } else {
+            throw new Error('Invalid response format from API');
+          }
+        } else {
+          throw new Error('No analysis data received from API');
+        }
+      } catch (error) {
+        console.error('Regeneration failed:', error);
+        
+        // Show user-friendly error message
+        let errorMessage = 'Regeneration failed. Please try again.';
+        if (error.code === 'ECONNABORTED') {
+          errorMessage = 'Request timed out. Please try again.';
+        } else if (error.response?.status === 400) {
+          errorMessage = 'Invalid website URL. Please check and try again.';
+        } else if (error.response?.status >= 500) {
+          errorMessage = 'Server error. Please try again later.';
+        }
+        
+        alert(errorMessage);
+        
+        // Return to results screen on error
+        setCurrentScreen('results');
+      }
+    } else {
+      alert('No original data found. Please start from the home page.');
+      navigate('/');
     }
   };
 
-  // Helper function to extract brand from URL
-  const extractBrandFromUrl = (url: string): string => {
-    try {
-      const domain = new URL(url).hostname;
-      const brandName = domain.replace('www.', '').split('.')[0];
-      return brandName.charAt(0).toUpperCase() + brandName.slice(1);
-    } catch {
-      return 'Brand';
-    }
-  };
-
-  const handleContinue = () => {
-    // Navigate to next step - you can implement your routing logic here
-    navigate('/campaign-setup');
-    console.log('Continue to Campaign Setup');
-  };
-
-  const handleBackToInput = () => {
-    setShowInsights(false);
-    setApiResponse(null);
-    setWebsiteData(null);
-    setWebsiteUrl('');
-    setError('');
-    setSuccess('');
-  };
-
-  // If showing insights, render the ProductInsights component
-  if (showInsights && apiResponse && websiteData) {
+  // Error Screen
+  if (error) {
     return (
-      <div>
-        <Navigation />
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-          <div className="pt-8 pb-4 px-6">
-            <div className="max-w-7xl mx-auto">
-              <Button 
-                onClick={handleBackToInput}
-                className="mb-4 bg-gray-700 hover:bg-gray-600 text-white"
-              >
-                ← Back to Input
-              </Button>
-            </div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center max-w-lg mx-auto px-6">
+          <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-8 h-8 bg-red-500 rounded-full"></div>
           </div>
-          <ProductInsights 
-            onContinue={handleContinue}
-            websiteData={websiteData}
-            apiResponse={apiResponse}
-          />
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Error</h2>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <Button onClick={handleGoBack} className="bg-blue-600 hover:bg-blue-700">
+            Go Back Home
+          </Button>
         </div>
       </div>
     );
   }
 
- 
-  const tabs = [
-    { id: 'website' as InputTab, label: 'Website', icon: Globe, color: 'purple' },
-    { id: 'images' as InputTab, label: 'Images', icon: Camera, color: 'blue' },
-  ];
-
-  // Animated background particles
-  const particles = Array.from({ length: 9 }, (_, i) => ({
-    id: i,
-    size: Math.random() * 3 + 1,
-    left: (i + 1) * 10,
-    delay: i * 2,
-    duration: 15 + Math.random() * 5
-  }));
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-purple-950 relative overflow-hidden">
-      {/* Animated Background Particles */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        {particles.map((particle) => (
-          <motion.div
-            key={particle.id}
-            className="particle absolute rounded-full"
-            style={{
-              width: `${particle.size * 4}px`,
-              height: `${particle.size * 4}px`,
-              left: `${particle.left}%`,
-              background: 'linear-gradient(45deg, rgba(168, 85, 247, 0.4), rgba(59, 130, 246, 0.4))',
-            }}
-            animate={{
-              y: ['100vh', '-100vh'],
-              rotate: [0, 360]
-            }}
-            transition={{
-              duration: particle.duration,
-              repeat: Infinity,
-              delay: particle.delay,
-              ease: "linear"
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Floating Background Elements */}
-      <div className="absolute top-20 left-10 w-20 h-20 bg-purple-500/10 rounded-full blur-xl animate-pulse" />
-      <div className="absolute top-40 right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-xl animate-pulse" style={{ animationDelay: '1s' }} />
-      
-      <Navigation />
-      
-      <div className="max-w-4xl mx-auto px-6 py-24 relative z-10">
-      
-        {/* Header */}
-        <motion.div 
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        >
-          <motion.div 
-            className="flex items-center justify-center gap-3 mb-6"
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          >
-            
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center animate-pulse">
-              <Brain className="w-7 h-7 text-white" />
-            </div>
-            <span className="text-sm font-semibold text-purple-400 uppercase tracking-wide">
-              MULTI-MODAL AI INPUT
-            </span>
-          </motion.div>
-          <motion.h1 
-            className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-          >
-            Feed Your <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">AI Marketing Brain</span>
-          </motion.h1>
-          <motion.p 
-            className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-          >
-            The more you share, the smarter your ads become. Upload any combination of content and watch AI create your perfect Meta Ads strategy.
-          </motion.p>
-        </motion.div>
-
-        {/* Tabs */}
-        <motion.div 
-          className="flex justify-center mb-12"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7, duration: 0.6 }}
-        >
-          <div className="bg-white/10 backdrop-blur-xl rounded-xl p-2 shadow-2xl border border-white/20">
-            <div className="flex space-x-2">
-              {tabs.map((tab, index) => {
-                const Icon = tab.icon;
-                return (
-                  <motion.button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-3 px-6 py-4 rounded-lg transition-all duration-300 font-medium ${
-                      activeTab === tab.id
-                        ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg'
-                        : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
-                    }`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.8 + index * 0.1 }}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span>{tab.label}</span>
-                  </motion.button>
-                );
-              })}
+  // Loading Screen
+  if (currentScreen === 'loading') {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center max-w-lg mx-auto px-6">
+          <div className="mb-12">
+            <div className="w-24 h-24 mx-auto mb-8 relative">
+              <div className="w-24 h-24 border-4 border-gray-100 rounded-full animate-spin"></div>
+              <div className="w-24 h-24 border-4 border-blue-600 border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                {/* <Brain className="text-blue-600 w-8 h-8" /> */}
+                <div className="w-26 h-24 flex items-center justify-center">
+                <img
+                  src={logo}
+                  alt="TEadifyz.AI Logo"
+                  className="w-26 h-20 object-contain"
+                />
+                 </div>
+              </div>
             </div>
           </div>
-        </motion.div>
+          
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">AI Analysis Starting</h2>
+          <p className="text-lg text-gray-600 mb-12">Our advanced AI is preparing to analyze your product and generate comprehensive insights...</p>
+          
+          <div className="w-full bg-gray-100 rounded-full h-3 mb-6">
+            <div 
+              className="bg-gradient-to-r from-blue-600 to-purple-600 h-3 rounded-full transition-all duration-500 ease-out" 
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+          <p className="text-base text-gray-500 font-medium">{progressText}</p>
+        </div>
+      </div>
+    );
+  }
 
-        {/* Error/Success Messages */}
-        <AnimatePresence>
-          {(error || success) && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="max-w-2xl mx-auto mb-8"
+  // Analysis Progress Screen
+  if (currentScreen === 'analysis') {
+    return (
+      <div className="min-h-screen bg-white">
+        {/* <Navigation /> */}
+        <div className="pt-20">
+          <div className="max-w-4xl mx-auto px-6 py-8">
+            <Button 
+              onClick={handleGoBack}
+              className="flex items-center text-gray-600 hover:text-gray-900 mb-8 bg-transparent hover:bg-gray-50 border-none shadow-none p-2"
+              data-testid="button-back-analysis"
             >
-              <div className={`p-4 rounded-xl flex items-center gap-3 ${
-                error 
-                  ? 'bg-red-500/10 border border-red-500/20 text-red-400' 
-                  : 'bg-green-500/10 border border-green-500/20 text-green-400'
-              }`}>
-                <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                <span className="text-sm font-medium">{error || success}</span>
+              <ChevronLeft className="mr-2 w-5 h-5" />
+              <span className="font-medium">Back to Home</span>
+            </Button>
+
+            <div className="text-center mb-16">
+              <div className="flex items-center justify-center mb-6">
+                {/* <div className="w-14 h-14 rounded-2xl flex items-center justify-center mr-4 shadow-lg"> */}
+                <div className="w-26 h-24 flex items-center justify-center">
+                <img
+                  src={logo}
+                  alt="TEadifyz.AI Logo"
+                  className="w-26 h-20 object-contain"
+                />
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                {/* </div> */}
+                <span className="text-blue-600 font-bold uppercase tracking-wider text-sm">AI Analysis in Progress</span>
+              </div>
+              <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">Generating Product <span className="text-blue-600">Insights</span></h1>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">Advanced AI algorithms are analyzing your content to extract valuable product information and market insights</p>
+            </div>
 
-        {/* Content Area */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1, duration: 0.8 }}
-        >
-          <Card className="bg-white/5 backdrop-blur-xl p-10 shadow-2xl border-2 border-dashed border-gray-600 hover:border-purple-500 transition-all duration-500">
-            <AnimatePresence mode="wait">
-              {activeTab === 'website' && (
-                <motion.div
-                  key="website"
-                  className="text-center"
-                  initial={{ opacity: 0, x: -50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 50 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <div className="flex justify-center mb-8">
+            <Card className="bg-white rounded-2xl shadow-xl border border-gray-100 p-10">
+              <div className="space-y-8">
+                {steps.map((step, index) => {
+                  const StepIcon = step.icon;
+                  const isActive = index <= currentStep;
+                  const isCurrentStep = index === currentStep;
+                  
+                  return (
                     <motion.div
-                      className="w-24 h-24 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-full flex items-center justify-center backdrop-blur-sm"
-                      animate={{ y: [0, -10, 0] }}
-                      transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                      key={index}
+                      className={`flex items-start space-x-6 ${isActive ? 'opacity-100' : 'opacity-40'}`}
+                      initial={{ opacity: 0.4, x: -20 }}
+                      animate={{ 
+                        opacity: isActive ? 1 : 0.4,
+                        x: isActive ? 0 : -20 
+                      }}
+                      transition={{ duration: 0.6, ease: "easeOut" }}
                     >
-                      <Link className="w-12 h-12 text-purple-400" />
-                    </motion.div>
-                  </div>
-                  <h3 className="text-3xl font-bold text-white mb-4">Website Analysis</h3>
-                  <p className="text-gray-300 mb-10 max-w-2xl mx-auto text-lg leading-relaxed">
-                    Enter your website URL and let AI extract insights about your business, products, and audience.
-                  </p>
-                  <div className="max-w-lg mx-auto">
-                    <Label htmlFor="website-url" className="text-left block mb-3 font-semibold text-gray-200">
-                      Website URL *
-                    </Label>
-                    <div className="relative">
-                      <Input
-                        id="website-url"
-                        type="url"
-                        placeholder="https://your-website.com"
-                        value={websiteUrl}
-                        onChange={(e) => {
-                          setWebsiteUrl(e.target.value);
-                          setError(''); // Clear error when user types
-                        }}
-                        className={`w-full px-6 py-4 bg-gray-800/50 border rounded-xl text-lg text-white placeholder-gray-400 focus:ring-2 transition-all duration-300 backdrop-blur-sm ${
-                          error && !websiteUrl
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
-                            : 'border-gray-600 focus:border-purple-500 focus:ring-purple-500/20'
-                        }`}
-                        disabled={isAnalyzing}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-purple-500/0 rounded-xl opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                    </div>
-                    <p className="text-xs text-gray-400 mt-2 text-left">
-                      * Required field - Must be a valid URL starting with http:// or https://
-                    </p>
-                  </div>
-                </motion.div>
-              )}
-
-              {activeTab === 'images' && (
-                <motion.div
-                  key="images"
-                  className="text-center"
-                  initial={{ opacity: 0, x: -50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 50 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <div className="flex justify-center mb-8">
-                    <motion.div
-                      className="w-24 h-24 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full flex items-center justify-center backdrop-blur-sm"
-                      animate={{ y: [0, -10, 0] }}
-                      transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                    >
-                      <Camera className="w-12 h-12 text-blue-400" />
-                    </motion.div>
-                  </div>
-                  <h3 className="text-3xl font-bold text-white mb-4">Image Upload</h3>
-                  <p className="text-gray-300 mb-10 max-w-2xl mx-auto text-lg leading-relaxed">
-                    Upload product images, logos, or marketing materials for AI analysis.
-                  </p>
-
-                  <div className="max-w-xl mx-auto space-y-6">
-                    <div>
-                      <Label htmlFor="image-title" className="block mb-2 text-gray-200 font-semibold text-left">
-                        Image Title
-                      </Label>
-                      <Input
-                        id="image-title"
-                        placeholder="Enter a title for the image"
-                        className="w-full px-6 py-4 bg-gray-800/50 border border-gray-600 rounded-xl text-lg text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 backdrop-blur-sm"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="product-price" className="block mb-2 text-gray-200 font-semibold text-left">
-                        Product Price
-                      </Label>
-                      <Input
-                        id="product-price"
-                        placeholder="Enter a Product Price $10"
-                        className="w-full px-6 py-4 bg-gray-800/50 border border-gray-600 rounded-xl text-lg text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 backdrop-blur-sm"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="image-description" className="block mb-2 text-gray-200 font-semibold text-left">
-                        Image Description
-                      </Label>
-                      <textarea
-                        id="image-description"
-                        rows={4}
-                        placeholder="Enter a short description for the image"
-                        className="w-full p-4 bg-gray-800/50 border border-gray-600 rounded-xl resize-none text-white placeholder-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300 backdrop-blur-sm text-lg"
-                      />
-                    </div>
-
-                    <motion.div
-                      className="border-2 border-dashed border-gray-600 rounded-xl p-12 cursor-pointer group hover:border-purple-500 transition-colors duration-300"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <div className="text-center">
-                        <motion.div
-                          animate={{ y: [0, -5, 0] }}
-                          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                        >
-                          <Upload className="w-12 h-12 text-gray-400 mx-auto mb-6 group-hover:text-purple-400 transition-colors duration-300" />
-                        </motion.div>
-                        <p className="text-gray-300 mb-4 text-lg">Drag and drop images here, or click to browse</p>
-                        <Button className="bg-gradient-to-r from-purple-500 to-blue-500 px-6 py-3 rounded-lg text-white font-semibold hover:from-purple-600 hover:to-blue-600 transition-all">
-                          Choose Files
-                        </Button>
+                      <div className={`w-12 h-12 ${step.bgColor} rounded-xl flex items-center justify-center mt-1 shadow-sm border-2 ${isCurrentStep ? 'border-blue-200' : 'border-transparent'}`}>
+                        <StepIcon className={`${step.iconColor} w-6 h-6`} />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-gray-900 mb-3">{step.title}</h3>
+                        <p className={`text-lg text-gray-600 leading-relaxed ${isCurrentStep ? 'typing-cursor' : ''}`}>
+                          {typingTexts[index]}
+                        </p>
                       </div>
                     </motion.div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </Card>
-        </motion.div>
-
-        {/* Action Buttons */}
-        <motion.div 
-          className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-12"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2, duration: 0.6 }}
-        >
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button 
-              size="lg" 
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white text-lg px-10 py-5 rounded-xl font-bold transition-all duration-300 shadow-xl min-w-[250px] disabled:opacity-50 disabled:cursor-not-allowed"
-              onClick={handleAnalyze}
-              disabled={isAnalyzing}
-            >
-              {isAnalyzing ? (
-                <span className="flex items-center justify-center gap-3">
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  >
-                    <Sparkles className="w-5 h-5" />
-                  </motion.div>
-                  <span>Analyzing...</span>
-                </span>
-              ) : (
-                <span className="flex items-center justify-center gap-3">
-                  <Sparkles className="w-5 h-5" />
-                  <span>Analyze & Generate Ads</span>
-                </span>
-              )}
-            </Button>
-          </motion.div>
-        </motion.div>
-
-        {/* Progress Indicators */}
-        <motion.div 
-          className="mt-16 text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.4, duration: 0.6 }}
-        >
-          <div className="flex justify-center items-center gap-4 mb-4">
-            <motion.div 
-              className={`w-3 h-3 rounded-full ${activeTab === 'website' ? 'bg-purple-500' : 'bg-gray-600'}`}
-              animate={activeTab === 'website' ? { scale: [1, 1.2, 1] } : {}}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-            <motion.div 
-              className={`w-3 h-3 rounded-full ${activeTab === 'images' ? 'bg-purple-500' : 'bg-gray-600'}`}
-              animate={activeTab === 'images' ? { scale: [1, 1.2, 1] } : {}}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
+                  );
+                })}
+              </div>
+            </Card>
           </div>
-        </motion.div>
+        </div>
       </div>
-    </div>
+    );
+  }
+
+  // Results Screen - Display actual API data
+  if (!analysisData) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Loading analysis data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    
+     
+      <div className="pt-0">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <Button 
+            onClick={handleGoBack}
+            className="flex items-center text-gray-600 hover:text-gray-900 mb-8 bg-transparent hover:bg-gray-50 border-none shadow-none p-2"
+            data-testid="button-back-results"
+          >
+            <ChevronLeft className="mr-2 w-5 h-5" />
+            <span className="font-medium">Back to Home</span>
+          </Button>
+          
+          {/* Results Header */}
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center mb-6">
+            <div className="w-26 h-24 flex items-center justify-center">
+                <img
+                  src={logo}
+                  alt="TEadifyz.AI Logo"
+                  className="w-26 h-20 object-contain"
+                />
+              </div>
+              <span className="text-green-600 font-bold uppercase tracking-wide text-sm">Analysis Complete</span>
+            </div>
+            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4 leading-tight">Product Insights <span className="text-blue-600">Ready</span></h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">Comprehensive AI-powered analysis of your product with actionable marketing insights</p>
+          </div>
+
+          {/* Main Content Grid */}
+          <div className="grid lg:grid-cols-3 gap-8 mb-12">
+            {/* Left Column - Product Details */}
+            <div className="lg:col-span-2 space-y-8">
+              {/* Product Overview */}
+              <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 hover:shadow-xl transition-shadow duration-300">
+                <div className="flex items-center mb-6">
+                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mr-4 border-2 border-blue-100">
+                    <Box className="text-blue-600 w-6 h-6" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">Product Overview</h2>
+                </div>
+                
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">
+                      {analysisData.brand_name ? `${analysisData.brand_name} - ` : ''}{analysisData.product_name || 'Product Analysis'}
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      {analysisData.detailed_description || 'Detailed product analysis and insights generated by AI.'}
+                    </p>
+                  </div>
+                  
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
+                      <h4 className="font-bold text-gray-900 mb-2 text-sm uppercase tracking-wide">Price Range</h4>
+                      <p className="text-3xl font-bold text-blue-600">
+                        {analysisData.price_range || 'Not specified'}
+                      </p>
+                    </div>
+                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
+                      <h4 className="font-bold text-gray-900 mb-2 text-sm uppercase tracking-wide">Category</h4>
+                      <p className="text-lg font-semibold text-purple-600">
+                        {analysisData.product_category?.main_category || 'General Product'}
+                        {analysisData.product_category?.subcategory && (
+                          <><br /><span className="text-sm text-purple-500">{analysisData.product_category.subcategory}</span></>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Specifications */}
+              {analysisData.specifications && analysisData.specifications.length > 0 && (
+                <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 hover:shadow-xl transition-shadow duration-300">
+                  <div className="flex items-center mb-6">
+                    <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mr-4 border-2 border-green-100">
+                      <Target className="text-green-600 w-6 h-6" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-900">Key Specifications</h2>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {analysisData.specifications.map((spec, index) => (
+                      <div key={index} className="flex items-start space-x-4">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mt-3 flex-shrink-0"></div>
+                        <p className="text-gray-700 font-medium">{spec}</p>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              )}
+
+              {/* Target Audience */}
+              {analysisData.target_audience && (
+                <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 hover:shadow-xl transition-shadow duration-300">
+                  <div className="flex items-center mb-6">
+                    <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mr-4 border-2 border-purple-100">
+                      <Users className="text-purple-600 w-6 h-6" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-900">Target Audience</h2>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {analysisData.target_audience.demographics && (
+                      <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl p-6 border border-purple-100">
+                        <h4 className="font-bold text-gray-900 mb-3">Demographics</h4>
+                        <p className="text-gray-600">{analysisData.target_audience.demographics}</p>
+                      </div>
+                    )}
+                    {analysisData.target_audience.interests && (
+                      <div className="bg-gradient-to-br from-blue-50 to-green-50 rounded-xl p-6 border border-blue-100">
+                        <h4 className="font-bold text-gray-900 mb-3">Interests</h4>
+                        <p className="text-gray-600">{analysisData.target_audience.interests}</p>
+                      </div>
+                    )}
+                    {analysisData.target_audience.lifestyle && (
+                      <div className="bg-gradient-to-br from-green-50 to-purple-50 rounded-xl p-6 border border-green-100">
+                        <h4 className="font-bold text-gray-900 mb-3">Lifestyle</h4>
+                        <p className="text-gray-600">{analysisData.target_audience.lifestyle}</p>
+                      </div>
+                    )}
+                  </div>
+                </Card>
+              )}
+
+              {/* Key Selling Points */}
+              {analysisData.key_selling_points && analysisData.key_selling_points.length > 0 && (
+                <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 hover:shadow-xl transition-shadow duration-300">
+                  <div className="flex items-center mb-6">
+                    <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mr-4 border-2 border-green-100">
+                      <Star className="text-green-600 w-6 h-6" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-900">Key Selling Points</h2>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {analysisData.key_selling_points.map((point, index) => (
+                      <div key={index} className="flex items-center space-x-4">
+                        <div className={`w-3 h-3 ${
+                          index % 4 === 0 ? 'bg-blue-600' :
+                          index % 4 === 1 ? 'bg-purple-600' :
+                          index % 4 === 2 ? 'bg-green-600' : 'bg-orange-600'
+                        } rounded-full`}></div>
+                        <p className="text-gray-700 font-medium">{point}</p>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              )}
+
+              {/* Emotional Appeal */}
+              {analysisData.emotional_appeal && (
+                <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 hover:shadow-xl transition-shadow duration-300">
+                  <div className="flex items-center mb-6">
+                    <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mr-4 border-2 border-orange-100">
+                      <MessageSquare className="text-orange-600 w-6 h-6" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-900">Emotional Appeal</h2>
+                  </div>
+                  <p className="text-gray-600 leading-relaxed">{analysisData.emotional_appeal}</p>
+                </Card>
+              )}
+
+              {/* Use Cases */}
+              {analysisData.possible_use_cases && analysisData.possible_use_cases.length > 0 && (
+                <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 hover:shadow-xl transition-shadow duration-300">
+                  <div className="flex items-center mb-6">
+                    <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mr-4 border-2 border-blue-100">
+                      <Eye className="text-blue-600 w-6 h-6" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-900">Use Cases</h2>
+                  </div>
+                  
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {analysisData.possible_use_cases.map((useCase, index) => (
+                      <div key={index} className="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                        <p className="text-gray-700 font-medium">{useCase}</p>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              )}
+            </div>
+
+            {/* Right Column - Additional Info */}
+            <div className="lg:col-span-1">
+              <div className="space-y-8 sticky top-24">
+                {/* Brand Info */}
+                <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 hover:shadow-xl transition-shadow duration-300">
+                  <div className="text-center mb-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Brand Information</h3>
+                    <p className="text-gray-600">AI-extracted brand details</p>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {analysisData.brand_name && (
+                      <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl border border-gray-100">
+                        <span className="text-gray-600 font-medium">Brand</span>
+                        <span className="font-bold text-gray-900">{analysisData.brand_name}</span>
+                      </div>
+                    )}
+                    {analysisData.product_name && (
+                      <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl border border-gray-100">
+                        <span className="text-gray-600 font-medium">Product</span>
+                        <span className="font-bold text-gray-900">{analysisData.product_name}</span>
+                      </div>
+                    )}
+                    {analysisData.price_range && (
+                      <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl border border-gray-100">
+                        <span className="text-gray-600 font-medium">Price</span>
+                        <span className="font-bold text-gray-900">{analysisData.price_range}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-8 text-center">
+                    <div className="flex items-center justify-center space-x-1 mb-3">
+                      <Star className="text-yellow-400 fill-current w-5 h-5" />
+                      <Star className="text-yellow-400 fill-current w-5 h-5" />
+                      <Star className="text-yellow-400 fill-current w-5 h-5" />
+                      <Star className="text-yellow-400 fill-current w-5 h-5" />
+                      <Star className="text-yellow-400 fill-current w-5 h-5" />
+                    </div>
+                    <p className="text-sm text-gray-600 font-medium">AI Analysis Complete</p>
+                  </div>
+                </Card>
+
+                {/* Recommended Platforms */}
+                {analysisData.recommended_platforms && analysisData.recommended_platforms.length > 0 && (
+                  <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 hover:shadow-xl transition-shadow duration-300">
+                    <h3 className="text-lg font-bold text-gray-900 mb-4">Recommended Platforms</h3>
+                    <div className="space-y-2">
+                      {analysisData.recommended_platforms.slice(0, 6).map((platform, index) => (
+                        <div key={index} className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-3 border border-blue-100">
+                          <span className="text-sm font-medium text-gray-700">{platform}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                )}
+
+                {/* SEO Keywords Preview */}
+                {analysisData.seo_keywords && analysisData.seo_keywords.length > 0 && (
+                  <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 hover:shadow-xl transition-shadow duration-300">
+                    <h3 className="text-lg font-bold text-gray-900 mb-4">SEO Keywords</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {analysisData.seo_keywords.slice(0, 8).map((keyword, index) => (
+                        <span key={index} className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-medium">
+                          {keyword}
+                        </span>
+                      ))}
+                    </div>
+                  </Card>
+                )}
+
+                {/* Upsell Opportunities */}
+                {analysisData.upsell_opportunities && analysisData.upsell_opportunities.length > 0 && (
+                  <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 hover:shadow-xl transition-shadow duration-300">
+                    <h3 className="text-lg font-bold text-gray-900 mb-4">Upsell Opportunities</h3>
+                    <div className="space-y-3">
+                      {analysisData.upsell_opportunities.slice(0, 4).map((opportunity, index) => (
+                        <div key={index} className="flex items-center space-x-3">
+                          <ShoppingCart className="w-4 h-4 text-green-600" />
+                          <span className="text-sm text-gray-700">{opportunity}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Competitor Analysis */}
+          {analysisData.competitor_analysis && (
+            <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mb-8 hover:shadow-xl transition-shadow duration-300">
+              <div className="flex items-center mb-6">
+                <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mr-4 border-2 border-red-100">
+                  <TrendingUp className="text-red-600 w-6 h-6" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">Competitor Analysis</h2>
+              </div>
+              <p className="text-gray-600 leading-relaxed">{analysisData.competitor_analysis}</p>
+            </Card>
+          )}
+
+          {/* Potential Pain Points */}
+          {analysisData.potential_pain_points && analysisData.potential_pain_points.length > 0 && (
+            <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mb-8 hover:shadow-xl transition-shadow duration-300">
+              <div className="flex items-center mb-6">
+                <div className="w-12 h-12 bg-yellow-50 rounded-xl flex items-center justify-center mr-4 border-2 border-yellow-100">
+                  <Target className="text-yellow-600 w-6 h-6" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">Potential Challenges</h2>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-4">
+                {analysisData.potential_pain_points.map((point, index) => (
+                  <div key={index} className="bg-yellow-50 rounded-lg p-4 border border-yellow-100">
+                    <p className="text-gray-700 font-medium">{point}</p>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          )}
+
+          {/* Content Suggestions */}
+          {analysisData.content_suggestions && analysisData.content_suggestions.length > 0 && (
+            <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mb-8 hover:shadow-xl transition-shadow duration-300">
+              <div className="flex items-center mb-6">
+                <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center mr-4 border-2 border-indigo-100">
+                  <Lightbulb className="text-indigo-600 w-6 h-6" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">Content Suggestions</h2>
+              </div>
+              
+              <div className="space-y-4">
+                {analysisData.content_suggestions.map((suggestion, index) => (
+                  <div key={index} className="flex items-start space-x-4">
+                    <div className="w-2 h-2 bg-indigo-500 rounded-full mt-3 flex-shrink-0"></div>
+                    <p className="text-gray-700 font-medium">{suggestion}</p>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          )}
+
+          {/* Action Buttons */}
+          <div className="flex flex-col  sm:flex-row gap-6 justify-center fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 z-400">
+          <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-center space-x-4">
+            <Button 
+              onClick={handleCreateCampaign}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              data-testid="button-create-campaign"
+            >
+              <Rocket className="mr-3 w-5 h-5" />
+              Create Campaign
+            </Button>
+            <Button 
+              onClick={handleRegenerate}
+              className="bg-gray-600 hover:bg-gray-700 text-white px-10 py-4 rounded-xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              data-testid="button-regenerate"
+            >
+              <RotateCcw className="mr-3 w-5 h-5" />
+              Regenerate Analysis
+            </Button>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    
   );
 };
 
 export default ProductInsightsPage;
+
+
+
+
+
+// import { useState, useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
+// import { Navigation } from "@/components/Navigation";
+// import { Button } from "@/components/ui/button";
+// import { Card } from "@/components/ui/card";
+// import logo from "@/assets/logoo.png"
+// import { 
+//   Brain, 
+//   Sparkles, 
+//   Globe,
+//   Tag,
+//   Users,
+//   Lightbulb,
+//   ChevronLeft,
+//   Star,
+//   Box,
+//   Rocket,
+//   RotateCcw,
+//   DollarSign,
+//   Target,
+//   TrendingUp,
+//   Eye,
+//   ShoppingCart,
+//   MessageSquare
+// } from 'lucide-react';
+// import { motion } from "framer-motion";
+// import axios from "axios";
+
+// const ProductInsightsPage = () => {
+//   const navigate = useNavigate();
+//   const [currentScreen, setCurrentScreen] = useState<'loading' | 'analysis' | 'results'>('loading');
+//   const [progress, setProgress] = useState(0);
+//   const [progressText, setProgressText] = useState('Initializing analysis...');
+//   const [currentStep, setCurrentStep] = useState(0);
+//   const [typingTexts, setTypingTexts] = useState(['', '', '', '']);
+//   const [analysisData, setAnalysisData] = useState(null);
+//   const [error, setError] = useState(null);
+
+//   const steps = [
+//     {
+//       icon: Globe,
+//       iconColor: 'text-blue-600',
+//       bgColor: 'bg-blue-50',
+//       title: 'Analyzing Website Content',
+//       text: 'Scanning website structure and extracting product information from your provided URL...'
+//     },
+//     {
+//       icon: Tag,
+//       iconColor: 'text-purple-600',
+//       bgColor: 'bg-purple-50',
+//       title: 'Extracting Product Details',
+//       text: 'Analyzing product features, pricing, specifications, and brand positioning...'
+//     },
+//     {
+//       icon: Users,
+//       iconColor: 'text-green-600',
+//       bgColor: 'bg-green-50',
+//       title: 'Identifying Target Audience',
+//       text: 'Identifying target demographics, customer personas, and market segments...'
+//     },
+//     {
+//       icon: Lightbulb,
+//       iconColor: 'text-orange-600',
+//       bgColor: 'bg-orange-50',
+//       title: 'Generating Marketing Insights',
+//       text: 'Generating comprehensive marketing insights and campaign recommendations...'
+//     }
+//   ];
+
+//   const typeText = (text: string, stepIndex: number, speed = 30): Promise<void> => {
+//     return new Promise(resolve => {
+//       let i = 0;
+//       const interval = setInterval(() => {
+//         if (i <= text.length) {
+//           setTypingTexts(prev => {
+//             const newTexts = [...prev];
+//             newTexts[stepIndex] = text.slice(0, i);
+//             return newTexts;
+//           });
+//           i++;
+//         } else {
+//           clearInterval(interval);
+//           resolve();
+//         }
+//       }, speed);
+//     });
+//   };
+
+//   useEffect(() => {
+//     const initializeData = () => {
+//       try {
+//         // Check if we have stored analysis data
+//         const storedData = sessionStorage.getItem('productAnalysis');
+        
+//         if (storedData) {
+//           const parsedData = JSON.parse(storedData);
+          
+//           // If we already have analysis data and it's still valid, show it directly
+//           if (parsedData.analysisData && isDataValid(parsedData)) {
+//             console.log('Found valid existing analysis data, displaying results');
+//             setAnalysisData(parsedData.analysisData);
+//             setCurrentScreen('results');
+//             return;
+//           }
+          
+//           // If we have stored request data but no analysis data, make API call
+//           if (parsedData.requestData || parsedData.originalUrl) {
+//             console.log('Found request data, making API call');
+//             makeApiCall(parsedData);
+//             return;
+//           }
+//         }
+        
+//         // No stored data found, redirect to home
+//         console.log('No valid data found, redirecting to home');
+//         setError('No analysis data found. Please start from the home page.');
+//         setTimeout(() => navigate('/'), 3000);
+        
+//       } catch (err) {
+//         console.error('Error initializing data:', err);
+//         setError('Invalid analysis data. Please try again.');
+//         setTimeout(() => navigate('/'), 3000);
+//       }
+//     };
+
+//     initializeData();
+//   }, [navigate]);
+
+//   // Check if stored data is still valid (not expired)
+//   const isDataValid = (storedData) => {
+//     if (!storedData.timestamp) return false;
+    
+//     const now = Date.now();
+//     const dataTime = new Date(storedData.timestamp).getTime();
+//     const hoursPassed = (now - dataTime) / (1000 * 60 * 60);
+    
+//     // Data is valid for 24 hours
+//     return hoursPassed < 24;
+//   };
+
+//   const makeApiCall = async (storedData) => {
+//     try {
+//       // Start the analysis animation first
+//       setCurrentScreen('loading');
+//       setProgress(0);
+//       setCurrentStep(0);
+//       setTypingTexts(['', '', '', '']);
+//       runAnalysisAnimation();
+      
+//       // Prepare request data
+//       const requestData = storedData.requestData || {
+//         url: storedData.originalUrl,
+//         ...(storedData.originalDescription && { description: storedData.originalDescription })
+//       };
+      
+//       console.log('Making API call with data:', requestData);
+      
+//       // Call the API
+//       const response = await axios.post(
+//         'https://tedifyz.app.n8n.cloud/webhook/d664dc96-6d9d-419b-aee8-c1cf23dd8fb2/nest-ai/projectbrief',
+//         requestData,
+//         {
+//           headers: {
+//             'Content-Type': 'application/json',
+//           },
+//           timeout: 60000 // 60 second timeout
+//         }
+//       );
+  
+//       // DEBUG: Log the entire response to see what we're getting
+//       console.log('Full API response:', response);
+//       console.log('Response data:', response.data);
+//       console.log('Response data type:', typeof response.data);
+//       console.log('Response data length:', response.data?.length);
+  
+//       // Check if response.data exists and has content
+//       if (response.data) {
+//         console.log('Response data structure:', JSON.stringify(response.data, null, 2));
+        
+//         // Try different possible response structures
+//         let analysisData = null;
+        
+//         // Option 1: Check if response.data is directly the analysis data (object)
+//         if (typeof response.data === 'object' && !Array.isArray(response.data) && response.data.product_name) {
+//           console.log('Found analysis data directly in response.data');
+//           analysisData = response.data;
+//         }
+//         // Option 2: Check if response.data is an array with analysis data
+//         else if (Array.isArray(response.data) && response.data.length > 0) {
+//           console.log('Response is array, checking first element...');
+          
+//           // Check if first element has message.content structure
+//           if (response.data[0]?.message?.content) {
+//             console.log('Found analysis data in response.data[0].message.content');
+//             analysisData = response.data[0].message.content;
+//           }
+//           // Check if first element is directly the analysis data
+//           else if (response.data[0]?.product_name) {
+//             console.log('Found analysis data directly in response.data[0]');
+//             analysisData = response.data[0];
+//           }
+//           // Check if the array contains the analysis data directly
+//           else {
+//             console.log('Checking if array contains analysis data directly');
+//             analysisData = response.data[0];
+//           }
+//         }
+//         // Option 3: Check if response.data has a nested structure
+//         else if (response.data.content || response.data.analysis || response.data.result) {
+//           console.log('Found analysis data in nested structure');
+//           analysisData = response.data.content || response.data.analysis || response.data.result;
+//         }
+        
+//         console.log('Final analysisData:', analysisData);
+//         console.log('AnalysisData type:', typeof analysisData);
+        
+//         if (analysisData) {
+//           // If analysisData is a string, try to parse it as JSON
+//           if (typeof analysisData === 'string') {
+//             try {
+//               analysisData = JSON.parse(analysisData);
+//               console.log('Successfully parsed string response as JSON');
+//             } catch (parseError) {
+//               console.error('Failed to parse response as JSON:', parseError);
+//               throw new Error('Invalid JSON response format');
+//             }
+//           }
+          
+//           // Update stored data with the analysis results and timestamp
+//           const updatedStorageData = {
+//             requestData,
+//             originalUrl: requestData.url,
+//             originalDescription: requestData.description,
+//             analysisData,
+//             timestamp: new Date().toISOString()
+//           };
+          
+//           sessionStorage.setItem('productAnalysis', JSON.stringify(updatedStorageData));
+//           setAnalysisData(analysisData);
+//         } else {
+//           console.error('No valid analysis data found in response');
+//           console.error('Available response keys:', Object.keys(response.data || {}));
+//           throw new Error('No analysis data found in API response');
+//         }
+//       } else {
+//         console.error('No response data received');
+//         throw new Error('Empty response from API');
+//       }
+//     } catch (error) {
+//       console.error('API call failed:', error);
+      
+//       // Log more details about the error
+//       if (error.response) {
+//         console.error('Error response status:', error.response.status);
+//         console.error('Error response data:', error.response.data);
+//         console.error('Error response headers:', error.response.headers);
+//       } else if (error.request) {
+//         console.error('Error request:', error.request);
+//       } else {
+//         console.error('Error message:', error.message);
+//       }
+      
+//       // Show user-friendly error message
+//       let errorMessage = 'Analysis failed. Please try again.';
+//       if (error.code === 'ECONNABORTED') {
+//         errorMessage = 'Request timed out. Please try again.';
+//       } else if (error.response?.status === 400) {
+//         errorMessage = 'Invalid website URL. Please check and try again.';
+//       } else if (error.response?.status >= 500) {
+//         errorMessage = 'Server error. Please try again later.';
+//       }
+      
+//       setError(errorMessage);
+//       setTimeout(() => navigate('/'), 3000);
+//     }
+//   };
+
+//   const runAnalysisAnimation = async () => {
+//     // Initial loading phase
+//     setProgressText('Initializing AI analysis engine...');
+//     setProgress(15);
+    
+//     await new Promise(resolve => setTimeout(resolve, 600));
+//     setProgressText('Connecting to product analysis systems...');
+//     setProgress(40);
+    
+//     await new Promise(resolve => setTimeout(resolve, 700));
+//     setProgressText('Preparing advanced algorithms...');
+//     setProgress(70);
+    
+//     await new Promise(resolve => setTimeout(resolve, 500));
+//     setProgressText('Starting analysis...');
+//     setProgress(100);
+    
+//     await new Promise(resolve => setTimeout(resolve, 200));
+    
+//     // Transition to analysis screen
+//     setCurrentScreen('analysis');
+    
+//     // Start analysis steps
+//     await runAnalysisSteps();
+//   };
+
+//   const runAnalysisSteps = async () => {
+//     for (let i = 0; i < steps.length; i++) {
+//       setCurrentStep(i);
+//       await typeText(steps[i].text, i);
+//       await new Promise(resolve => setTimeout(resolve, 1800));
+//     }
+    
+//     // Transition to results
+//     await new Promise(resolve => setTimeout(resolve, 800));
+//     setCurrentScreen('results');
+//   };
+
+//   const handleGoBack = () => {
+//     // Clear all stored data when going back to home
+//     sessionStorage.removeItem('productAnalysis');
+//     navigate('/');
+//   };
+
+//   const handleCreateCampaign = () => {
+//     navigate('/pricing-plan');
+//   };
+
+//   const handleRegenerate = async () => {
+//     const storedData = sessionStorage.getItem('productAnalysis');
+//     if (storedData) {
+//       const parsedData = JSON.parse(storedData);
+      
+//       try {
+//         // Clear existing analysis data but keep request data
+//         const requestData = parsedData.requestData || {
+//           url: parsedData.originalUrl,
+//           ...(parsedData.originalDescription && { description: parsedData.originalDescription })
+//         };
+        
+//         // Update storage with cleared analysis data
+//         const clearedData = {
+//           requestData,
+//           originalUrl: requestData.url,
+//           originalDescription: requestData.description,
+//           analysisData: null, // Clear existing analysis
+//           timestamp: new Date().toISOString()
+//         };
+        
+//         sessionStorage.setItem('productAnalysis', JSON.stringify(clearedData));
+        
+//         // Reset state
+//         setError(null);
+//         setAnalysisData(null);
+        
+//         // Make new API call
+//         await makeApiCall(clearedData);
+        
+//       } catch (error) {
+//         console.error('Regeneration failed:', error);
+        
+//         // Show user-friendly error message
+//         let errorMessage = 'Regeneration failed. Please try again.';
+//         if (error.code === 'ECONNABORTED') {
+//           errorMessage = 'Request timed out. Please try again.';
+//         } else if (error.response?.status === 400) {
+//           errorMessage = 'Invalid website URL. Please check and try again.';
+//         } else if (error.response?.status >= 500) {
+//           errorMessage = 'Server error. Please try again later.';
+//         }
+        
+//         setError(errorMessage);
+//       }
+//     } else {
+//       setError('No original data found. Please start from the home page.');
+//       setTimeout(() => navigate('/'), 3000);
+//     }
+//   };
+
+//   // Error Screen
+//   if (error) {
+//     return (
+//       <div className="min-h-screen bg-white flex items-center justify-center">
+//         <div className="text-center max-w-lg mx-auto px-6">
+//           <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+//             <div className="w-8 h-8 bg-red-500 rounded-full"></div>
+//           </div>
+//           <h2 className="text-2xl font-bold text-gray-900 mb-4">Error</h2>
+//           <p className="text-gray-600 mb-6">{error}</p>
+//           <Button onClick={handleGoBack} className="bg-blue-600 hover:bg-blue-700">
+//             Go Back Home
+//           </Button>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   // Loading Screen
+//   if (currentScreen === 'loading') {
+//     return (
+//       <div className="min-h-screen bg-white flex items-center justify-center">
+//         <div className="text-center max-w-lg mx-auto px-6">
+//           <div className="mb-12">
+//             <div className="w-24 h-24 mx-auto mb-8 relative">
+//               <div className="w-24 h-24 border-4 border-gray-100 rounded-full animate-spin"></div>
+//               <div className="w-24 h-24 border-4 border-blue-600 border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
+//               <div className="absolute inset-0 flex items-center justify-center">
+//                 <div className="w-26 h-24 flex items-center justify-center">
+//                 <img
+//                   src={logo}
+//                   alt="TEadifyz.AI Logo"
+//                   className="w-26 h-20 object-contain"
+//                 />
+//               </div>
+//               </div>
+//             </div>
+//           </div>
+          
+//           <h2 className="text-3xl font-bold text-gray-900 mb-4">AI Analysis Starting</h2>
+//           <p className="text-lg text-gray-600 mb-12">Our advanced AI is preparing to analyze your product and generate comprehensive insights...</p>
+          
+//           <div className="w-full bg-gray-100 rounded-full h-3 mb-6">
+//             <div 
+//               className="bg-gradient-to-r from-blue-600 to-purple-600 h-3 rounded-full transition-all duration-500 ease-out" 
+//               style={{ width: `${progress}%` }}
+//             ></div>
+//           </div>
+//           <p className="text-base text-gray-500 font-medium">{progressText}</p>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   // Analysis Progress Screen
+//   if (currentScreen === 'analysis') {
+//     return (
+//       <div className="min-h-screen bg-white">
+//         <div className="pt-20">
+//           <div className="max-w-4xl mx-auto px-6 py-8">
+//             <Button 
+//               onClick={handleGoBack}
+//               className="flex items-center text-gray-600 hover:text-gray-900 mb-8 bg-transparent hover:bg-gray-50 border-none shadow-none p-2"
+//               data-testid="button-back-analysis"
+//             >
+//               <ChevronLeft className="mr-2 w-5 h-5" />
+//               <span className="font-medium">Back to Home</span>
+//             </Button>
+
+//             <div className="text-center mb-16">
+//               <div className="flex items-center justify-center mb-6">
+//                 <div className="w-26 h-24 flex items-center justify-center">
+//                 <img
+//                   src={logo}
+//                   alt="TEadifyz.AI Logo"
+//                   className="w-26 h-20 object-contain"
+//                 />
+//               </div>
+//                 <span className="text-blue-600 font-bold uppercase tracking-wider text-sm">AI Analysis in Progress</span>
+//               </div>
+//               <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">Generating Product <span className="text-blue-600">Insights</span></h1>
+//               <p className="text-xl text-gray-600 max-w-2xl mx-auto">Advanced AI algorithms are analyzing your content to extract valuable product information and market insights</p>
+//             </div>
+
+//             <Card className="bg-white rounded-2xl shadow-xl border border-gray-100 p-10">
+//               <div className="space-y-8">
+//                 {steps.map((step, index) => {
+//                   const StepIcon = step.icon;
+//                   const isActive = index <= currentStep;
+//                   const isCurrentStep = index === currentStep;
+                  
+//                   return (
+//                     <motion.div
+//                       key={index}
+//                       className={`flex items-start space-x-6 ${isActive ? 'opacity-100' : 'opacity-40'}`}
+//                       initial={{ opacity: 0.4, x: -20 }}
+//                       animate={{ 
+//                         opacity: isActive ? 1 : 0.4,
+//                         x: isActive ? 0 : -20 
+//                       }}
+//                       transition={{ duration: 0.6, ease: "easeOut" }}
+//                     >
+//                       <div className={`w-12 h-12 ${step.bgColor} rounded-xl flex items-center justify-center mt-1 shadow-sm border-2 ${isCurrentStep ? 'border-blue-200' : 'border-transparent'}`}>
+//                         <StepIcon className={`${step.iconColor} w-6 h-6`} />
+//                       </div>
+//                       <div className="flex-1">
+//                         <h3 className="text-xl font-bold text-gray-900 mb-3">{step.title}</h3>
+//                         <p className={`text-lg text-gray-600 leading-relaxed ${isCurrentStep ? 'typing-cursor' : ''}`}>
+//                           {typingTexts[index]}
+//                         </p>
+//                       </div>
+//                     </motion.div>
+//                   );
+//                 })}
+//               </div>
+//             </Card>
+//           </div>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   // Results Screen - Display actual API data
+//   if (!analysisData) {
+//     return (
+//       <div className="min-h-screen bg-white flex items-center justify-center">
+//         <div className="text-center">
+//           <p className="text-gray-600">Loading analysis data...</p>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="pt-0">
+//       <div className="max-w-7xl mx-auto px-6 py-8">
+//         <Button 
+//           onClick={handleGoBack}
+//           className="flex items-center text-gray-600 hover:text-gray-900 mb-8 bg-transparent hover:bg-gray-50 border-none shadow-none p-2"
+//           data-testid="button-back-results"
+//         >
+//           <ChevronLeft className="mr-2 w-5 h-5" />
+//           <span className="font-medium">Back to Home</span>
+//         </Button>
+        
+//         {/* Results Header */}
+//         <div className="text-center mb-12">
+//           <div className="flex items-center justify-center mb-6">
+//           <div className="w-26 h-24 flex items-center justify-center">
+//               <img
+//                 src={logo}
+//                 alt="TEadifyz.AI Logo"
+//                 className="w-26 h-20 object-contain"
+//               />
+//             </div>
+//             <span className="text-green-600 font-bold uppercase tracking-wide text-sm">Analysis Complete</span>
+//           </div>
+//           <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4 leading-tight">Product Insights <span className="text-blue-600">Ready</span></h1>
+//           <p className="text-xl text-gray-600 max-w-3xl mx-auto">Comprehensive AI-powered analysis of your product with actionable marketing insights</p>
+//         </div>
+
+//         {/* Main Content Grid */}
+//         <div className="grid lg:grid-cols-3 gap-8 mb-12">
+//           {/* Left Column - Product Details */}
+//           <div className="lg:col-span-2 space-y-8">
+//             {/* Product Overview */}
+//             <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 hover:shadow-xl transition-shadow duration-300">
+//               <div className="flex items-center mb-6">
+//                 <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mr-4 border-2 border-blue-100">
+//                   <Box className="text-blue-600 w-6 h-6" />
+//                 </div>
+//                 <h2 className="text-2xl font-bold text-gray-900">Product Overview</h2>
+//               </div>
+              
+//               <div className="space-y-6">
+//                 <div>
+//                   <h3 className="text-xl font-bold text-gray-900 mb-3">
+//                     {analysisData.brand_name ? `${analysisData.brand_name} - ` : ''}{analysisData.product_name || 'Product Analysis'}
+//                   </h3>
+//                   <p className="text-gray-600 leading-relaxed">
+//                     {analysisData.detailed_description || 'Detailed product analysis and insights generated by AI.'}
+//                   </p>
+//                 </div>
+                
+//                 <div className="grid md:grid-cols-2 gap-6">
+//                   <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
+//                     <h4 className="font-bold text-gray-900 mb-2 text-sm uppercase tracking-wide">Price Range</h4>
+//                     <p className="text-3xl font-bold text-blue-600">
+//                       {analysisData.price_range || 'Not specified'}
+//                     </p>
+//                   </div>
+//                   <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
+//                     <h4 className="font-bold text-gray-900 mb-2 text-sm uppercase tracking-wide">Category</h4>
+//                     <p className="text-lg font-semibold text-purple-600">
+//                       {analysisData.product_category?.main_category || 'General Product'}
+//                       {analysisData.product_category?.subcategory && (
+//                         <><br /><span className="text-sm text-purple-500">{analysisData.product_category.subcategory}</span></>
+//                       )}
+//                     </p>
+//                   </div>
+//                 </div>
+//               </div>
+//             </Card>
+
+//             {/* Rest of the component remains the same... */}
+//             {/* I'll include the key components for brevity, but the full structure should remain */}
+
+//             {/* Specifications */}
+//             {analysisData.specifications && analysisData.specifications.length > 0 && (
+//               <Card className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 hover:shadow-xl transition-shadow duration-300">
+//                 <div className="flex items-center mb-6">
+//                   <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mr-4 border-2 border-green-100">
+//                     <Target className="text-green-600 w-6 h-6" />
+//                   </div>
+//                   <h2 className="text-2xl font-bold text-gray-900">Key Specifications</h2>
+//                 </div>
+                
+//                 <div className="space-y-4">
+//                   {analysisData.specifications.map((spec, index) => (
+//                     <div key={index} className="flex items-start space-x-4">
+//                       <div className="w-2 h-2 bg-green-500 rounded-full mt-3 flex-shrink-0"></div>
+//                       <p className="text-gray-700 font-medium">{spec}</p>
+//                     </div>
+//                   ))}
+//                 </div>
+//               </Card>
+//             )}
+
+//             {/* Continue with all other sections... */}
+//           </div>
+
+//           {/* Right Column - Additional Info */}
+//           <div className="lg:col-span-1">
+//             <div className="space-y-8 sticky top-24">
+//               {/* Brand Info and other cards remain the same */}
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* Action Buttons */}
+//         <div className="flex flex-col sm:flex-row gap-6 justify-center fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 z-400">
+//         <div className="max-w-7xl mx-auto px-6 py-4">
+//         <div className="flex items-center justify-center space-x-4">
+//           <Button 
+//             onClick={handleCreateCampaign}
+//             className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+//             data-testid="button-create-campaign"
+//           >
+//             <Rocket className="mr-3 w-5 h-5" />
+//             Create Campaign
+//           </Button>
+//           <Button 
+//             onClick={handleRegenerate}
+//             className="bg-gray-600 hover:bg-gray-700 text-white px-10 py-4 rounded-xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+//             data-testid="button-regenerate"
+//           >
+//             <RotateCcw className="mr-3 w-5 h-5" />
+//             Regenerate Analysis
+//           </Button>
+//           </div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ProductInsightsPage;
