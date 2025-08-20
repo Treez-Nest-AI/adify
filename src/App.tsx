@@ -18,16 +18,20 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
+
 import ProductInsightsPage from "./pages/ProductInsightsPage";
 import ProductAnalysisPage from "./pages/ProductAnalysisPage";
 import ProductDescriptionPage from "./pages/ProductDescriptionPage";
 import { CampaignSetup } from "@/components/CampaignSetup";
 import { Navigation } from "@/components/Navigation";
 import { AdPreviewGenerator } from "./components/AdPreviewGenerator";
+import {store} from "@/Store/store"
 
 const CampaignSetupPage = () => (
   <div className="min-h-screen bg-background">
+    
     <Navigation />
+   
     <CampaignSetup onBack={() => window.history.back()} onGenerate={() => window.location.assign('/payment-plans')} />
   </div>
 );

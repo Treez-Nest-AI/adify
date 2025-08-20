@@ -3,6 +3,7 @@ import { ArrowLeft, Settings, Target, Calendar, MapPin, Edit3, Save, X, DollarSi
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { upsertCampaignConfig } from "@/Store/campaignSlice";
 import {
     DropdownMenu,
     DropdownMenuTrigger,
@@ -16,9 +17,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { DatePicker } from "@/components/ui/DatePicker";
-import { LoadScript, GoogleMap, Marker, Autocomplete } from "@react-google-maps/api";
+import { LoadScript, GoogleMap, Marker, Autocomplete, useJsApiLoader } from "@react-google-maps/api";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/Store/store";
 
 const adGoalOptions = [
     { value: "REACH", title: "Website", description: "AI Smart Optimization", content: "Get more people to visit your website.", icon: "👥", color: "blue" },
@@ -29,6 +32,12 @@ const adGoalOptions = [
 const libraries: ("places")[] = ["places"];
 
 export default function CampaignConfig() {
+    const dispatch = useDispatch();
+    const campaignConfig = useSelector((state: RootState) => state.campaign.campaignConfig);
+    const { isLoaded } = useJsApiLoader({
+        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyDPq9MIskQ0LPm2j4DNZGHQrxcPA1aQAfM",
+        libraries: ["places"],
+    });
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         projectName: "",
@@ -114,10 +123,10 @@ export default function CampaignConfig() {
 
     const validateForm = () => {
         const newErrors = {
-            projectName: !formData.projectName.trim(),
-            startDate: !formData.startDate,
-            endDate: !formData.endDate,
-            targetingLocation: !formData.targetingLocation.trim()
+            projectName: !campaignConfig.projectName.trim(),
+            startDate: !campaignConfig.startDate,
+            endDate: !campaignConfig.endDate,
+            targetingLocation: !campaignConfig.targetingLocation.trim()
         };
 
         setErrors(newErrors);
@@ -208,8 +217,11 @@ export default function CampaignConfig() {
                                 </CardHeader>
                                 <CardContent>
                                     <Input
-                                        value={formData.projectName}
-                                        onChange={(e) => handleInputChange("projectName", e.target.value)}
+                                        value={campaignConfig.projectName}
+
+                                        onChange={(e) =>
+                                            dispatch(upsertCampaignConfig({ projectName: e.target.value }))
+                                        }
                                         placeholder="Enter your project name"
                                         className={cn("text-base", errors.projectName && "border-red-500")}
                                     />
@@ -228,12 +240,15 @@ export default function CampaignConfig() {
                                 </CardHeader>
                                 <CardContent>
                                     <RadioGroup
-                                        value={formData.adGoal}
-                                        onValueChange={(value) => handleInputChange("adGoal", value)}
+                                        value={campaignConfig.adGoal} // use redux value
+                                        onValueChange={(value) =>
+                                            dispatch(upsertCampaignConfig({ adGoal: value }))
+                                        }
+
                                         className="grid md:grid-cols-3 gap-4"
                                     >
                                         {adGoalOptions.map((option) => {
-                                            const isSelected = formData.adGoal === option.value;
+                                            const isSelected = campaignConfig.adGoal === option.value;
                                             return (
                                                 <div key={option.value} className="relative">
                                                     <RadioGroupItem value={option.value} id={option.value} className="sr-only" />
@@ -285,7 +300,7 @@ export default function CampaignConfig() {
 
                                         <DropdownMenu>
                                             <DropdownMenuTrigger className="w-full rounded-md border border-input bg-background px-3 py-2 text-left text-base">
-                                                {formData.conversionButton || "Select an option"}
+                                                {campaignConfig.conversionButton || "Select an option"}
                                             </DropdownMenuTrigger>
 
                                             <DropdownMenuContent
@@ -313,8 +328,17 @@ export default function CampaignConfig() {
                                                 <Calendar className="h-4 w-4" /> Start Date *
                                             </Label>
                                             <DatePicker
-                                                value={formData.startDate}
-                                                onChange={(date) => handleDateChange("startDate", date)}
+
+                                                value={
+                                                    campaignConfig.startDate
+                                                        ? (typeof campaignConfig.startDate === "string"
+                                                            ? new Date(campaignConfig.startDate)
+                                                            : campaignConfig.startDate)
+                                                        : undefined
+                                                }
+                                                onChange={(date) =>
+                                                    dispatch(upsertCampaignConfig({ startDate: date }))
+                                                }
                                                 placeholder="Select start date"
                                             />
                                             {errors.startDate && (
@@ -326,8 +350,18 @@ export default function CampaignConfig() {
                                                 <Calendar className="h-4 w-4" /> End Date *
                                             </Label>
                                             <DatePicker
-                                                value={formData.endDate}
-                                                onChange={(date) => handleDateChange("endDate", date)}
+                                                // value={formData.endDate}
+                                                // onChange={(date) => handleDateChange("endDate", date)}
+                                                value={
+                                                    campaignConfig.endDate
+                                                        ? (typeof campaignConfig.endDate === "string"
+                                                            ? new Date(campaignConfig.endDate)
+                                                            : campaignConfig.endDate)
+                                                        : undefined
+                                                }
+                                                onChange={(date) =>
+                                                    dispatch(upsertCampaignConfig({ endDate: date }))
+                                                }
                                                 placeholder="Select end date"
                                             />
                                             {errors.endDate && (
@@ -337,31 +371,56 @@ export default function CampaignConfig() {
                                     </div>
 
                                     {/* Location + Map */}
+                                    {/* Location + Map */}
                                     <div>
                                         <Label className="flex items-center gap-2 mb-2">
                                             <MapPin className="h-4 w-4" /> Cities and Countries to Advertise *
                                         </Label>
-                                        <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyDPq9MIskQ0LPm2j4DNZGHQrxcPA1aQAfM"} libraries={libraries}>
-                                            <Autocomplete onLoad={(ac) => (autocompleteRef.current = ac)} onPlaceChanged={handlePlaceChanged}>
-                                                <Input
-                                                    value={formData.targetingLocation}
-                                                    onChange={(e) => handleInputChange("targetingLocation", e.target.value)}
-                                                    placeholder="Add a city or country"
-                                                    className={cn("text-base", errors.targetingLocation && "border-red-500")}
-                                                />
-                                            </Autocomplete>
-                                            {errors.targetingLocation && (
-                                                <p className="text-red-500 text-xs mt-1">Location is required</p>
-                                            )}
-                                            {selectedLocation && (
-                                                <div className="h-64 w-full rounded-lg overflow-hidden border mt-4">
-                                                    <GoogleMap mapContainerStyle={{ width: "100%", height: "100%" }} center={selectedLocation} zoom={12}>
-                                                        <Marker position={selectedLocation} />
-                                                    </GoogleMap>
-                                                </div>
-                                            )}
-                                        </LoadScript>
+
+                                        {isLoaded ? (
+                                            <>
+                                                <Autocomplete
+                                                    onLoad={(ac) => (autocompleteRef.current = ac)}
+                                                    onPlaceChanged={handlePlaceChanged}
+                                                >
+                                                    <Input
+                                                        // value={formData.targetingLocation}
+                                                        // onChange={(e) => handleInputChange("targetingLocation", e.target.value)}
+                                                        value={campaignConfig.targetingLocation}
+
+                                                        onChange={(e) =>
+                                                            dispatch(upsertCampaignConfig({ targetingLocation: e.target.value }))
+                                                        }
+                                                        placeholder="Add a city or country"
+                                                        className={cn("text-base", errors.targetingLocation && "border-red-500")}
+                                                    />
+                                                </Autocomplete>
+
+                                                {errors.targetingLocation && (
+                                                    <p className="text-red-500 text-xs mt-1">Location is required</p>
+                                                )}
+
+                                                {selectedLocation && (
+                                                    <div className="h-64 w-full rounded-lg overflow-hidden border mt-4">
+                                                        <GoogleMap
+                                                            mapContainerStyle={{ width: "100%", height: "100%" }}
+                                                            center={selectedLocation}
+                                                            zoom={12}
+                                                        >
+                                                            <Marker position={selectedLocation} />
+                                                        </GoogleMap>
+                                                    </div>
+                                                )}
+                                            </>
+                                        ) : (
+                                            <Input
+                                                placeholder="Loading Google Maps..."
+                                                disabled
+                                                className="text-base"
+                                            />
+                                        )}
                                     </div>
+
                                 </CardContent>
                             </Card>
 

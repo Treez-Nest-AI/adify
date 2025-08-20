@@ -579,6 +579,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { MetaModal } from "@/components/ui/MetaModal";
 import logo from "@/assets/logoo.png"
+import { useAppDispatch, useAppSelector } from "@/Store/hooks";
+import { createCampaign } from "@/Store/campaignSlice";
+import { Toast } from "@radix-ui/react-toast"; // or your toast
+
 import {
   ChevronLeft,
   RotateCcw,
@@ -608,6 +612,8 @@ interface MarketingAnglesResponse {
 }
 
 const ProductDescriptionPage = () => {
+  const dispatch = useAppDispatch();
+
   const [isMetaModalOpen, setIsMetaModalOpen] = useState(false);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
@@ -881,86 +887,95 @@ const parseMarketingAnglesResponse = (responseData: any): MarketingAngle[] => {
     }
   };
 
-  // const handleCreateCampaign = () => {
-  //   console.log('Creating campaign with marketing angles...');
-  //   navigate('/Campaign')
-  //   toast({
-  //     title: "Campaign Creation",
-  //     description: "Campaign creation feature coming soon!",
-  //   });
-  // };
 
 
 
 
   // Updated handleCreateCampaign function to send data to the API
-  const handleCreateCampaign = async () => {
-    // try {
-    //   setIsLoading(true);
+  // const handleCreateCampaign = async () => {
+  //   try {
+  //     setIsLoading(true);
   
-    //   // Format exactly as required
-    //   const campaignData = [
-    //     {
-    //       angels: marketingAngles.map((angle) => ({
-    //         angle_name: angle.angle_name,
-    //         hook_line: angle.hook_line,
-    //         emotional_trigger: angle.emotional_trigger,
-    //         target_audience: angle.target_audience,
-    //         visual_idea: angle.visual_idea,
-    //         platform_recommendation: angle.platform_recommendation,
-    //         Estimate_ads_Budget:
-    //           angle.Estimate_ads_Budget || angle["Estimate ads Budget"] || ""
-    //       }))
-    //     }
-    //   ];
+  //     // Format exactly as required
+  //     const campaignData = [
+  //       {
+  //         angels: marketingAngles.map((angle) => ({
+  //           angle_name: angle.angle_name,
+  //           hook_line: angle.hook_line,
+  //           emotional_trigger: angle.emotional_trigger,
+  //           target_audience: angle.target_audience,
+  //           visual_idea: angle.visual_idea,
+  //           platform_recommendation: angle.platform_recommendation,
+  //           Estimate_ads_Budget:
+  //             angle.Estimate_ads_Budget || angle["Estimate ads Budget"] || ""
+  //         }))
+  //       }
+  //     ];
   
-    //   console.log("Sending campaign data to API:", campaignData);
+  //     console.log("Sending campaign data to API:", campaignData);
   
-    //   const response = await axios.post(
-    //     "https://spideyxxx.app.n8n.cloud/webhook/d664dc96-6d9d-419b-aee8-c1cf23dd8fb2/nest-ai/adsetcreation",
-    //     campaignData,
-    //     {
-    //       headers: {
-    //         "Content-Type": "application/json"
-    //       },
-    //       timeout: 30000
-    //     }
-    //   );
+  //     const response = await axios.post(
+  //       "https://base234.app.n8n.cloud/webhook/d664dc96-6d9d-419b-aee8-c1cf23dd8fb2/nest-ai/adsetcreation",
+  //       campaignData,
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json"
+  //         },
+  //         timeout: 30000
+  //       }
+  //     );
   
-    //   console.log("Campaign API response:", response.data);
+  //     console.log("Campaign API response:", response.data);
   
-    //   toast({
-    //     title: "Success!",
-    //     description: "Campaign created successfully!"
-    //   });
+  //     toast({
+  //       title: "Success!",
+  //       description: "Campaign created successfully!"
+  //     });
   
-    //   sessionStorage.setItem("campaignResponse", JSON.stringify(response.data));
-      navigate("/Campaign");
-    // } catch (error) {
-    //   console.error("Campaign creation failed:", error);
+  //     sessionStorage.setItem("campaignResponse", JSON.stringify(response.data));
+  //     navigate("/Campaign");
+  //   } catch (error) {
+  //     console.error("Campaign creation failed:", error);
   
-    //   let errorMessage = "Failed to create campaign. Please try again.";
-    //   if (error.code === "ECONNABORTED") {
-    //     errorMessage = "Request timed out. Please try again.";
-    //   } else if (error.response?.status === 400) {
-    //     errorMessage = "Invalid campaign data. Please check and try again.";
-    //   } else if (error.response?.status >= 500) {
-    //     errorMessage = "Server error. Please try again later.";
-    //   } else if (error.response?.data?.error) {
-    //     errorMessage = `API Error: ${error.response.data.error}`;
-    //   }
+  //     let errorMessage = "Failed to create campaign. Please try again.";
+  //     if (error.code === "ECONNABORTED") {
+  //       errorMessage = "Request timed out. Please try again.";
+  //     } else if (error.response?.status === 400) {
+  //       errorMessage = "Invalid campaign data. Please check and try again.";
+  //     } else if (error.response?.status >= 500) {
+  //       errorMessage = "Server error. Please try again later.";
+  //     } else if (error.response?.data?.error) {
+  //       errorMessage = `API Error: ${error.response.data.error}`;
+  //     }
   
-    //   toast({
-    //     title: "Error",
-    //     description: errorMessage,
-    //     variant: "destructive"
-    //   });
+  //     toast({
+  //       title: "Error",
+  //       description: errorMessage,
+  //       variant: "destructive"
+  //     });
   
-    //   setError(errorMessage);
-    // } finally {
-    //   setIsLoading(false);
-    // }
-  };
+  //     setError(errorMessage);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+const handleCreateCampaign = async () => {
+  // you already have marketingAngles[] in this page
+  const resultAction = await dispatch(createCampaign({ marketingAngles }));
+  console.log("Campaign creation result:", resultAction);
+
+  if (createCampaign.fulfilled.match(resultAction)) {
+    toast({ title: "Success!", description: "Campaign created successfully!" });
+    // if you still want a copy in sessionStorage (optional)
+    sessionStorage.setItem("campaignResponse", JSON.stringify(resultAction.payload));
+    navigate("/Campaign"); // <- go to the page that reads ad sets
+  } else {
+    const msg = resultAction.payload ?? "Failed to create campaign. Please try again.";
+    toast({ title: "Error", description: String(msg), variant: "destructive" });
+  }
+};
+
+
   
   const getPlatformBadgeColor = (platform: string) => {
     const colors: Record<string, string> = {
