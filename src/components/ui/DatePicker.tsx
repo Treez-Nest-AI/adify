@@ -23,6 +23,8 @@ export function DatePicker({
 }: DatePickerProps) {
   // Local state so it works standalone
   const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(value)
+  // State to control popover open/close
+  const [isOpen, setIsOpen] = React.useState(false)
 
   // Sync with external value if parent changes it
   React.useEffect(() => {
@@ -34,10 +36,12 @@ export function DatePicker({
   const handleSelect = (date: Date | undefined) => {
     setSelectedDate(date)
     onChange?.(date) // notify parent
+    // Close the popover after selection
+    setIsOpen(false)
   }
 
   return (
-    <Popover>
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
